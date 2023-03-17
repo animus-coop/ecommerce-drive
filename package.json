@@ -3,10 +3,10 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"dev": "next dev -p 3002",
 		"build": "rm -rf .next && next build",
 		"build-command": "tsc product-process.ts --experimentalDecorators true --outDir ./build",
-		"start": "next start",
+		"start": "next start -p 3002",
 		"lint": "next lint",
 		"update-products": "node build/product-process.js",
 		"prettier": "prettier --write ./**/*.{js,json,ts,tsx}"
