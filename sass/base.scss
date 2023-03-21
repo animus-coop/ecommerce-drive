@@ -19,12 +19,12 @@ body {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  width: 10%;
+  width: 150px;
   background-color: blue;
   color: white;
   font-weight: bold;
   text-align: center;
-  padding: 5px;
+  padding: auto;
   z-index: 9000;
   border-bottom-right-radius: 15%;
   border-bottom-left-radius: 15%;

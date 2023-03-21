@@ -32,4 +32,4 @@ yarn-error.log*
 .vercel
 
 .env
-google-credentials.json
+#google-credentials.json

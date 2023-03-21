@@ -15,8 +15,8 @@
   "/api/products": "pages/api/products.js",
   "/layout": "pages/layout.html",
   "/admin": "pages/admin.js",
-  "/cart": "pages/cart.js",
   "/": "pages/index.js",
+  "/cart": "pages/cart.js",
   "/products": "pages/products.js",
   "/_document": "pages/_document.js",
   "/404": "pages/404.html"
