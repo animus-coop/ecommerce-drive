@@ -1,7 +1,6 @@
 {
   "/_middleware": "pages/_middleware.js",
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
   "/api/admin/cart/dates": "pages/api/admin/cart/dates.js",
   "/api/admin/orders": "pages/api/admin/orders.js",
   "/api/admin/update-products": "pages/api/admin/update-products.js",
@@ -14,9 +13,10 @@
   "/api/orders": "pages/api/orders.js",
   "/api/products": "pages/api/products.js",
   "/layout": "pages/layout.html",
-  "/admin": "pages/admin.js",
   "/": "pages/index.js",
   "/cart": "pages/cart.js",
+  "/_error": "pages/_error.js",
+  "/admin": "pages/admin.js",
   "/products": "pages/products.js",
   "/_document": "pages/_document.js",
   "/404": "pages/404.html"
