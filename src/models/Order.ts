@@ -78,6 +78,10 @@ Order.statics.updateOrder = async function (orderId, order) {
 	return updatedOrder;
 };
 
+Order.statics.deleteOrder = async function (orderId) {
+	await this.findByIdAndRemove(orderId);
+};
+
 Order.statics.deleteAllOrders = async function () {
 	await this.deleteMany({});
 };

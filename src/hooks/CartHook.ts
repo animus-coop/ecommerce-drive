@@ -41,8 +41,13 @@ export function useCart(cartSSR: Cart) {
 		const newCart = { products , balance:cart.balance , total: sumTotals(products) };
 		setCart(newCart);
 	};
+	
+	const clearProducts = () =>{
+		const clearCart = { products: [] , balance:cart.balance , total: 0 };
+		setCart(clearCart);
+	}
 
 	const productExists = code => cart.products.find(product => product.code === code);
 
-	return { ...cart, updateProduct, addProduct, deleteProduct };
+	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts };
 }
