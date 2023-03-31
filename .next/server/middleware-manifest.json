@@ -1,0 +1,37 @@
+{
+  "sortedMiddleware": [
+    "/"
+  ],
+  "clientInfo": [
+    [
+      "/",
+      false
+    ]
+  ],
+  "middleware": {
+    "/": {
+      "env": [
+        "SPREADSHEET_ID",
+        "PRODUCT_SHEET_NAME",
+        "USERS_SHEET_NAME",
+        "ORDERS_SHEET_NAME",
+        "OAUTH_CLIENT_ID",
+        "OAUTH_CLIENT_KEY",
+        "OAUTH_REDIRECT_URL",
+        "OAUTH_SCOPES",
+        "PICTURES_FOLDERS_ID",
+        "MONGODB_CONNECTION",
+        "IRON_SESSIONS_PASSWORD"
+      ],
+      "files": [
+        "server/edge-runtime-webpack.js",
+        "server/pages/_middleware.js"
+      ],
+      "name": "pages/_middleware",
+      "page": "/",
+      "regexp": "^/(?!_next).*$",
+      "wasm": []
+    }
+  },
+  "version": 1
+}
