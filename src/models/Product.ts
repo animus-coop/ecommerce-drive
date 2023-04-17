@@ -12,6 +12,7 @@ const Product = new Schema<BaseProductDocument>({
 	price: { type: 'number' },
 	category: { type: 'string' },
 	seller: { type: 'string' },
+	order: { type: 'number' },
 	picture: { type: 'string' }
 });
 
@@ -27,7 +28,7 @@ Product.statics.getProducts = async function (category: string, page: number) {
 		.select({ _id: 0, __v: 0 })
 		.limit(limit)
 		.skip(limit * (page - 1))
-		.sort({ name: 1 }); 
+		.sort({ order: 1 }); 
 		
 	const totalPages = Math.ceil(productsCount / limit);
 	return { products, totalPages };

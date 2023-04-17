@@ -24,6 +24,7 @@ function serializingProducts(products: Array<Array<string>>, files: FileInfoType
 				category: slugify(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CATEGORY_COLUMN]),
 				categoryName: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CATEGORY_COLUMN],
 				seller: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.SELLER_COLUMN],
+				order: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.SORT_COLUMN],
 				picture: fileInfo ? fileInfo.webViewLink : ''
 			});
 		}
@@ -90,7 +91,6 @@ export async function updateProducts(): Promise<object> {
 		const filesInfo = await GDservice.retrieveFilesFromPicturesFolder();
 
 		const productsFormated: Array<productType> = serializingProducts(products, filesInfo);
-
 		await saveProductsOnMongo(productsFormated);
 		await saveCategories(productsFormated);
 
