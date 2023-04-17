@@ -67,6 +67,9 @@ const Product = new external_mongoose_.Schema({
     seller: {
         type: "string"
     },
+    order: {
+        type: "number"
+    },
     picture: {
         type: "string"
     }
@@ -86,7 +89,7 @@ Product.statics.getProducts = async function(category, page) {
         _id: 0,
         __v: 0
     }).limit(limit).skip(limit * (page - 1)).sort({
-        name: 1
+        order: 1
     });
     const totalPages = Math.ceil(productsCount / limit);
     return {

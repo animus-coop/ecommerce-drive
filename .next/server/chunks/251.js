@@ -37,7 +37,8 @@ exports.modules = {
             MINIUM_COLUMN: 3,
             PRICE_COLUMN: 4,
             CATEGORY_COLUMN: 5,
-            SELLER_COLUMN: 6
+            SELLER_COLUMN: 6,
+            SORT_COLUMN: 7
         },
         USERS: {
             ID_COLUMN: 0,
