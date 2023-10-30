@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
-import ApiException from '../exceptions/ApiExeption';
 import Category from '../models/Category';
 import BaseService from './BaseService';
+import {slugify} from "../../helpers/slug";
 
 @singleton()
 class CategoryService extends BaseService {
@@ -9,31 +9,18 @@ class CategoryService extends BaseService {
 		super();
 	}
 
-	async saveCategory(name: string) {
-		try {
-			await Category.createCategory(name);
-			return { error: false };
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	save(name: string) {
+		const slug = slugify(name);
+		const newCategory = { name, slug };
+		return Category.create(newCategory);
 	}
 
-	async getAll() {
-		try {
-			const categories = await Category.getAll();
-			return categories;
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	getAll() {
+		return Category.find({}).select({ _id: 0, __v: 0 });
 	}
 
-	async clearAll() {
-		try {
-			await Category.deleteAll();
-			return { error: false };
-		} catch (error) {
-			throw new ApiException(error);
-		}
+	deleteAll() {
+		return Category.deleteMany({});
 	}
 }
 

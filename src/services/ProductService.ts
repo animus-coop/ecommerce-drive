@@ -1,5 +1,4 @@
 import { singleton } from 'tsyringe';
-import ApiException from '../exceptions/ApiExeption';
 import { ProductModel } from '../global/types';
 import Product from '../models/Product';
 import BaseService from './BaseService';
@@ -10,48 +9,30 @@ class ProductService extends BaseService {
 		super();
 	}
 
-	async saveProduct(product: ProductModel) {
-		try {
-			await Product.createProduct(product);
-			return { error: false };
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	save(product: ProductModel) {
+		return Product.create(product);
 	}
 
-	async getProducts(category, page: number = 1) {
-		try {
-			const products = await Product.getProducts(category, page);
-			return products;
-		} catch (e) {
-			throw new ApiException(e);
-		}
-	}
+	async get(category, page = 1) {
+		const limit = 60;
+		const productsCount = await Product.getDocumentsCount(category);
+		const query = category ? { category } : {};
+		const products = await Product.find(query)
+			.select({_id: 0})
+			.limit(limit)
+			.skip(limit * (page - 1))
+			.sort({ order: 1 });
 
-	// async getByCategory(category: string, page: number = 1) {
-	// 	try {
-	// 		const products = await Product.getByCategory(category, page);
-	// 		return products;
-	// 	} catch (e) {
-	// 		throw new ApiException(e);
-	// 	}
-	// }
+		const totalPages = Math.ceil(productsCount / limit);
+		return { products, totalPages };
+	}
 
 	async searchProduct(query, category) {
-		try {
-			const products = await Product.search(query, category);
-			return products;
-		} catch (e) {
-			throw new ApiException(e);
-		}
+		return Product.search(query, category);
 	}
 
-	async clearAll() {
-		try {
-			return Product.deleteAll();
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	deleteAll() {
+		return Product.deleteMany({});
 	}
 }
 
