@@ -6,6 +6,7 @@ import GoogleSheetService from '../services/GoogleSheetService';
 import OrderService from '../services/OrderService';
 import ConfigService from '../services/ConfigService';
 import config from '../../constants/config';
+import parse from "../utils/parse";
 
 export async function getServerSideProps(context) {
 	const orderService = container.resolve(OrderService);
@@ -15,7 +16,7 @@ export async function getServerSideProps(context) {
 	const user: UserLogged = ironSession.user ?? { logged: false };
 
 	const cart = { products: [], balance:0, total: 0 };
-	
+
 	if(ironSession.user && !ironSession.user.id){
 		context.req.session.destroy();
 		return {
@@ -50,11 +51,17 @@ export async function getServerSideProps(context) {
 		console.log("Inicio de sesion", {user, cart})
 	}
 
-	const currentStatus = await configService.getCartStatus();
+	const status = await configService.getCartStatus();
 
-	const currentOrders = await orderService.getCurrentOrders();
+	const orders = await orderService.getAll();
 
 	return {
-		props: { user, currentStatus, currentOrders, cart }
+		props: {
+			user,
+			status: status,
+			orders: parse(orders),
+			count: orders ? orders.length : 0,
+			cart
+		}
 	};
 }

@@ -1,6 +1,7 @@
 import { truncate } from 'fs/promises';
 import mongoose, { Schema, model, Document } from 'mongoose';
 import { ProductModel } from '../global/types';
+import category from "./Category";
 
 interface BaseProductDocument extends ProductModel, Document {}
 
@@ -14,53 +15,17 @@ const Product = new Schema<BaseProductDocument>({
 	seller: { type: 'string' },
 	order: { type: 'number' },
 	picture: { type: 'string' }
+}, {
+	versionKey: false
 });
 
 Product.index({ name: 'text' });
 
-Product.statics.getProducts = async function (category: string, page: number) {
-	const limit = 60;
+Product.statics.getDocumentsCount = async function (category?: string) {
+	return category ? await this.countDocuments({ category }) : await this.countDocuments();
+}
 
-	const productsCount = category ? await this.countDocuments({ category }) : await this.countDocuments();
-
-	const query = category ? { category } : {};
-	const products = await this.find(query)
-		.select({ _id: 0, __v: 0 })
-		.limit(limit)
-		.skip(limit * (page - 1))
-		.sort({ order: 1 }); 
-		
-	const totalPages = Math.ceil(productsCount / limit);
-	return { products, totalPages };
-};
-
-Product.statics.createProduct = async function (product: ProductModel) {
-	await this.create(product);
-};
-
-// Product.statics.getByCategory = async function (category: string, page: number) {
-// 	const limit = 60;
-
-// 	const productsCount = await this.countDocuments({ category });
-
-// 	const products = await this.find({ category })
-// 		.select({ _id: 0, __v: 0 })
-// 		.limit(limit)
-// 		.skip(limit * (page - 1));
-
-// 	if (!products.length) {
-// 		throw new Error(`No products found on category ${category}`);
-// 	}
-
-// 	const totalPages = Math.ceil(productsCount / limit);
-// 	return { products, totalPages };
-// };
-
-Product.statics.deleteAll = async function () {
-	await this.deleteMany({});
-};
-
-Product.statics.search = async function (category, search) {
+Product.statics.search = async function (search, category) {
 	const query = category ? { category, $text: { $search: search } } : { $text: { $search: search } };
 	const products = await this.find(query, { score: { $meta: 'textScore' } }).sort({
 		score: { $meta: 'textScore' }

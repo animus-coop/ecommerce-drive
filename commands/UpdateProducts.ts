@@ -36,12 +36,12 @@ async function saveProductsOnMongo(products: Array<productType>): Promise<object
 	try {
 		const productService = container.resolve(ProductService);
 
-		await productService.clearAll();
+		await productService.deleteAll();
 
 		await Promise.all(
 			products.map(async product => {
 				if (product.stock) {
-					await productService.saveProduct(product);
+					await productService.save(product);
 				}
 			})
 		);
@@ -60,7 +60,7 @@ async function saveCategories(products: Array<productType>): Promise<object> {
 
 		const categories = [];
 
-		await categoryService.clearAll();
+		await categoryService.deleteAll();
 
 		products.map(product => {
 			if (!categories.includes(product.categoryName)) {
@@ -70,7 +70,7 @@ async function saveCategories(products: Array<productType>): Promise<object> {
 
 		Promise.all(
 			categories.map(async category => {
-				await categoryService.saveCategory(category);
+				await categoryService.save(category);
 			})
 		);
 
