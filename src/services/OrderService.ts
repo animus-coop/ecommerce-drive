@@ -1,5 +1,4 @@
 import { singleton } from 'tsyringe';
-import ApiException from '../exceptions/ApiExeption';
 import { orderData } from '../global/types';
 import Order, { OrderI } from '../models/Order';
 import BaseService from './BaseService';
@@ -10,65 +9,48 @@ class OrderService extends BaseService {
 		super();
 	}
 
-	async saveOrder(order: OrderI) {
-		try {
-			await Order.createOrder(order);
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	save(order: OrderI) {
+		return Order.create(order);
 	}
 
-	async getCurrentOrders() {
-		try {
-			const currentOrders = await Order.getCurrentOrders();
-			return JSON.parse(JSON.stringify(currentOrders));
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	getAll() {
+		return Order.find({}).exec();
 	}
 
-	async getUserOrder(email: string) {
-		try {
-			const userOrder = await Order.getUserOrder(email);
-
-			return userOrder;
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	getUserOrder(email: string) {
+		return Order.findOne({ email }).exec();
 	}
 
 	async getOrdersToPost() {
-		try {
-			const orders = await Order.getOrdersToPost();
-			return orders;
-		} catch (e) {
-			throw new ApiException(e);
-		}
+		const allOrders = await Order.find({});
+		const formattedOrders = [];
+		allOrders.map(order => {
+			order.products.map(product => {
+				const newOrder = {
+					userId: order.userId,
+					email: order.email,
+					name: order.name,
+					product: product.name,
+					code: product.code,
+					cantidad: product.qty
+				};
+				formattedOrders.push(newOrder);
+			});
+		});
+		return formattedOrders;
 	}
 
-	async updateOrder(orderId: string, order: orderData) {
-		try {
-			const updatedOrder = await Order.updateOrder(orderId, order);
-			return updatedOrder;
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	updateOrder(orderId: string, order: orderData) {
+		const { products, total } = order;
+		return Order.findByIdAndUpdate(orderId, { products, total }, { new: true }).exec();
 	}
 
-	async deleteOrder(orderId: string) {
-		try {
-			await Order.deleteOrder(orderId);
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	deleteOrder(orderId: string) {
+	    return Order.findByIdAndRemove(orderId).exec();
 	}
 
-	async clearLocalOrders() {
-		try {
-			await Order.deleteAllOrders();
-		} catch (e) {
-			throw new ApiException(e);
-		}
+	clearLocalOrders() {
+		return Order.deleteMany({}).exec();
 	}
 }
 

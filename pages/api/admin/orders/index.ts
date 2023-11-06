@@ -2,7 +2,7 @@ import { container } from 'tsyringe';
 import GoogleSheetService from '../../../../src/services/GoogleSheetService';
 import OrderService from '../../../../src/services/OrderService';
 
-export default async function postOrders(req, res) {
+export default async function ordersHandler(req, res) {
 	const orderService = container.resolve(OrderService);
 	if (req.method === 'POST') {
 		try {
@@ -16,7 +16,7 @@ export default async function postOrders(req, res) {
 		}
 	} else {
 		try {
-			const currentOrders = await orderService.getCurrentOrders();
+			const currentOrders = await orderService.getAll();
 			res.status(200).json(currentOrders);
 		} catch (error) {
 			console.log(error, "Error saving order");

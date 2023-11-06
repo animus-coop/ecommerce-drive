@@ -12,7 +12,7 @@ export default async function postOrder(req, res) {
 	try {
 		const orderService = container.resolve(OrderService);
 		const body = JSON.parse(req.body);
-		
+
 		const { products, balance, total } = body;
 		const subtotal = (total+balance);
 
@@ -21,11 +21,11 @@ export default async function postOrder(req, res) {
 		}
 
 		const currentSession: IronSessionData = await getIronSession(req, res, sessionOptions);
-		
+
 		const { email, name, id } = currentSession.user;
-		
-		await orderService.saveOrder({ userId: id, products, email ,name: name, total });
-	
+
+		await orderService.save({ userId: id, products, email ,name: name, total });
+
 		// Enviar mail
 
 		const mailData = {
