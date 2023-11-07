@@ -18,8 +18,9 @@ export type UserLogged = {
 };
 
 export type Cart = {
-	products: Array<ProductCart>;
 	balance?: number;
+	hasUnsavedChanges?: boolean;
+	products: Array<ProductCart>;
 	total: number;
 };
 

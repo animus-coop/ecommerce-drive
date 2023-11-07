@@ -11,7 +11,7 @@ export async function getServerSideProps(context) {
 	const configService = container.resolve(ConfigService);
 	const getIsOpen = await configService.getCartStatus();
 	const ironSession: IronSessionData = await getIronSession(context.req, context.res, sessionOptions);
-	
+
 	if(ironSession.user && !ironSession.user.id){
 		context.req.session.destroy();
 		return {
@@ -35,7 +35,12 @@ export async function getServerSideProps(context) {
 
 	const user: UserLogged = ironSession.user ?? { logged: false };
 
-	const cart = { products: [], balance:0, total: 0 };
+	const cart = {
+		balance: 0,
+		hasUnsavedChanges: false,
+		products: [],
+		total: 0
+	};
 
 	if (user.logged) {
 		const orderService = container.resolve(OrderService);

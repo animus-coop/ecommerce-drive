@@ -33,6 +33,7 @@ export default function Cart(props) {
 			method: `${isEditingOrder ? 'PUT' : 'POST'}`,
 			data: { products: cart.products, balance: cart.balance , total: cart.total },
 			onSuccess: () => {
+				cart.setHasUnsavedChanges(false);
 				router.push('/#orderstored');
 				toast.warn(`Su pedido se ha ${isEditingOrder ? 'modificado' : 'realizado'} con éxito`, {
 					icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />
@@ -54,6 +55,7 @@ export default function Cart(props) {
 			method: "DELETE",
 			data: { orderId: props.orderId},
 			onSuccess: () => {
+				cart.setHasUnsavedChanges(false);
 				router.push('/');
 				cart.clearProducts()
 				toast.warn(`Su pedido se ha cancelado con éxito`, {
@@ -83,13 +85,15 @@ export default function Cart(props) {
 									/>
 								))}
 								<TotalCard total={cart.total} balance={cart.balance}/>
-								<Button
-									disabled={cart.products.length < 0}
-									className={`${cart.products.length > 0 ? 'button-total' : 'button-total-disabled'}`}
-									onClick={sendOrder}
-								>
-									{isEditingOrder ? 'Modificar pedido' : 'Realizar pedido'}
-								</Button>
+								{cart.hasUnsavedChanges && (
+									<Button
+										disabled={cart.products.length < 0}
+										className={`${cart.products.length > 0 ? 'button-total' : 'button-total-disabled'}`}
+										onClick={sendOrder}
+									>
+										{isEditingOrder ? 'Modificar pedido' : 'Realizar pedido'}
+									</Button>
+									)}
 								<Button
 									className="button-continue"
 									onClick={() => {

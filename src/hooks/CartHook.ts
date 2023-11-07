@@ -4,6 +4,15 @@ import { Cart, ProductCart } from '../global/types';
 export function useCart(cartSSR: Cart) {
 	const [cart, setCart] = useState(cartSSR);
 
+	const setHasUnsavedChanges = (hasUnsavedChanges: boolean) => {
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges,
+			products: cart.products,
+			total: cart.total
+		});
+	}
+
 	const sumTotals = products => products.reduce((total, product) => product.total + total, 0);
 
 	const updateProduct = (productToUpdate: ProductCart) => {
@@ -13,8 +22,12 @@ export function useCart(cartSSR: Cart) {
 			}
 			return product;
 		});
-		const newCart = { products, balance: cart.balance, total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
 
 	const addProduct = (productToAdd: ProductCart) => {
@@ -32,22 +45,33 @@ export function useCart(cartSSR: Cart) {
 			products.push({ ...productToAdd, total: productToAdd.price * productToAdd.qty });
 		}
 
-		const newCart = { products , balance:cart.balance , total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
 
 	const deleteProduct = (productToDelete: ProductCart) => {
 		const products = cart.products.filter(product => product.code !== productToDelete.code);
-		const newCart = { products , balance:cart.balance , total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
-	
+
 	const clearProducts = () =>{
-		const clearCart = { products: [] , balance:cart.balance , total: 0 };
-		setCart(clearCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: cart.hasUnsavedChanges,
+			products: [],
+			total: 0 });
 	}
 
 	const productExists = code => cart.products.find(product => product.code === code);
 
-	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts };
+	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts, setHasUnsavedChanges };
 }

@@ -9,9 +9,14 @@ import config from '../../constants/config';
 export async function getServerSideProps(context) {
 	const ironSession: IronSessionData = await getIronSession(context.req, context.res, sessionOptions);
 	const user: UserLogged = ironSession.user ?? { logged: false };
-	const cart = { products: [], balance: 0 ,total: 0 };
+	const cart = {
+		balance: 0,
+		hasUnsavedChanges: false,
+		products: [],
+		total: 0
+	};
 	let orderId = null;
-	
+
 	if(ironSession.user && !ironSession.user.id){
 		context.req.session.destroy();
 		return {
