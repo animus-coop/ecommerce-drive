@@ -2,13 +2,13 @@ import React, { FC, useState } from 'react';
 import { Avatar, Grid, Text } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import { ProductCart } from '../../src/global/types';
+import { CartProduct } from '../../src/global/types';
 import QuantityControls from '../QuantityControls';
 
 type ProductCartProps = {
-	product: ProductCart;
-	deleteProduct(product: ProductCart): void;
-	updateProduct(product: ProductCart, qty: number);
+	product: CartProduct;
+	deleteProduct(product: CartProduct): void;
+	updateProduct(product: CartProduct, qty: number);
 };
 
 const ProductDetailCard: FC<ProductCartProps> = ({ product, deleteProduct, updateProduct }) => {

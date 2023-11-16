@@ -3,7 +3,7 @@ import Header from '../components/navigation/Header';
 import { Button, Container, Grid } from '@nextui-org/react';
 import ProductDetailCard from '../components/cards/ProductDetailCard';
 import TotalCard from '../components/cards/TotalCard';
-import { ProductCart as productType } from '../src/global/types';
+import { CartProduct as productType } from '../src/global/types';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { infoMessages } from '../helpers/notify';
@@ -83,13 +83,14 @@ export default function Cart(props) {
 									/>
 								))}
 								<TotalCard total={cart.total} balance={cart.balance}/>
-								<Button
-									disabled={cart.products.length < 0}
-									className={`${cart.products.length > 0 ? 'button-total' : 'button-total-disabled'}`}
-									onClick={sendOrder}
-								>
-									{isEditingOrder ? 'Modificar pedido' : 'Realizar pedido'}
-								</Button>
+								{cart.hasUnsavedChanges && (
+									<Button
+										className={`${cart.products.length > 0 ? 'button-total' : 'button-total-disabled'}`}
+										onClick={sendOrder}
+									>
+										{isEditingOrder ? 'Modificar pedido' : 'Realizar pedido'}
+									</Button>
+								)}
 								<Button
 									className="button-continue"
 									onClick={() => {

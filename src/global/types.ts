@@ -1,4 +1,4 @@
-export type ProductCart = {
+export type CartProduct = {
 	code: number;
 	name: string;
 	qty: number;
@@ -18,8 +18,9 @@ export type UserLogged = {
 };
 
 export type Cart = {
-	products: Array<ProductCart>;
 	balance?: number;
+	hasUnsavedChanges?: boolean;
+	products: Array<CartProduct>;
 	total: number;
 };
 
@@ -88,6 +89,6 @@ export type productType = {
 };
 
 export type orderData = {
-	products: productType[];
+	products: CartProduct[];
 	total: number;
 }

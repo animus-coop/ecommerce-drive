@@ -1,23 +1,29 @@
 import { useState } from 'react';
-import { Cart, ProductCart } from '../global/types';
+import { Cart, CartProduct } from '../global/types';
 
 export function useCart(cartSSR: Cart) {
 	const [cart, setCart] = useState(cartSSR);
 
-	const sumTotals = products => products.reduce((total, product) => product.total + total, 0);
+	const sumTotals = (products: Array<CartProduct>) => products.reduce((total: number, product: CartProduct) => {
+		return product.total + total
+	}, 0);
 
-	const updateProduct = (productToUpdate: ProductCart) => {
+	const updateProduct = (productToUpdate: CartProduct) => {
 		const products = cart.products.map(product => {
 			if (product.code === productToUpdate.code) {
 				return { ...productToUpdate, total: productToUpdate.price * productToUpdate.qty };
 			}
 			return product;
 		});
-		const newCart = { products, balance: cart.balance, total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
 
-	const addProduct = (productToAdd: ProductCart) => {
+	const addProduct = (productToAdd: CartProduct) => {
 		let products = cart.products;
 
 		if (productExists(productToAdd.code)) {
@@ -32,22 +38,34 @@ export function useCart(cartSSR: Cart) {
 			products.push({ ...productToAdd, total: productToAdd.price * productToAdd.qty });
 		}
 
-		const newCart = { products , balance:cart.balance , total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
 
-	const deleteProduct = (productToDelete: ProductCart) => {
+	const deleteProduct = (productToDelete: CartProduct) => {
 		const products = cart.products.filter(product => product.code !== productToDelete.code);
-		const newCart = { products , balance:cart.balance , total: sumTotals(products) };
-		setCart(newCart);
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: true,
+			products,
+			total: sumTotals(products)
+		});
 	};
-	
+
 	const clearProducts = () =>{
-		const clearCart = { products: [] , balance:cart.balance , total: 0 };
-		setCart(clearCart);
+		setCart({
+			products: [],
+			balance: cart.balance,
+			hasUnsavedChanges: false,
+			total: 0
+		});
 	}
 
-	const productExists = code => cart.products.find(product => product.code === code);
+	const productExists = (code: number) => cart.products.find(product => product.code === code);
 
 	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts };
 }
