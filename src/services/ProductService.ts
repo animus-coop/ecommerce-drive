@@ -34,6 +34,29 @@ class ProductService extends BaseService {
 	deleteAll() {
 		return Product.deleteMany({});
 	}
+
+	async productHasEnoughStock(code: number, qty: number) {
+		const product = await Product.findOne({ code }).exec();
+		if (!product) {
+			throw new Error('PRODUCT_NOT_FOUND');
+		}
+		return product.stock >= qty;
+	}
+
+	async updateProductStock(code: number, amount: number) {
+		const product = await Product.findOne({ code }).exec();
+		if (!product) {
+			throw new Error('PRODUCT_NOT_FOUND');
+		}
+		const newStock = product.stock + amount;
+		if (newStock < 0) {
+			throw new Error('PRODUCT_STOCK_NOT_ENOUGH');
+		}
+		product.stock = newStock;
+		return product.save();
+	}
+
+
 }
 
 export default ProductService;

@@ -98,7 +98,7 @@ export default function Products(props) {
 					</>
 				)}
 			</Container>
-			{cart.products.length > 0 && <ButtonCart cart={cart} />}
+			{cart.products.length > 0 && cart.hasUnsavedChanges && <ButtonCart cart={cart} />}
 		</Layout>
 	);
 }

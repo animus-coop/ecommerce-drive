@@ -1,11 +1,12 @@
 export type CartProduct = {
 	code: number;
 	name: string;
-	qty: number;
-	total: number;
-	price?: number;
 	minimum: string;
 	picture?: string;
+	price?: number;
+	qty: number;
+	stock: number;
+	total: number;
 };
 
 export type UserLogged = {
@@ -31,7 +32,7 @@ export type OrderType = Array<{userId:string, email: string; product: string; ca
 export type FileInfoType = Array<{ webViewLink: string; code: number }>;
 
 export type ProductModel = {
-	stock: boolean;
+	stock: number;
 	code: number;
 	name: string;
 	minimum: string;
@@ -76,7 +77,7 @@ export type sheetOrder = Array<{
 }>;
 
 export type productType = {
-	stock: boolean;
+	stock: number;
 	code: number;
 	name: string;
 	minimum: string;

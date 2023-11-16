@@ -16,7 +16,7 @@ function serializingProducts(products: Array<Array<string>>, files: FileInfoType
 				file => file.code === parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN])
 			);
 			serializeProducts.push({
-				stock: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN] == '1',
+				stock: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN],
 				code: parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN]),
 				name: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN],
 				minimum: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN],
