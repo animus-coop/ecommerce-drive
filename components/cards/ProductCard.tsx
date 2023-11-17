@@ -37,10 +37,10 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 						<Grid sm={7} xs={7} lg={6} md={6} xl={6} className="product-quantity" justify="center">
 							<QuantityControls
 								qty={quantity}
-								addProduct={() => {
+								increaseQty={() => {
 									setQuantity(prev => prev + 1);
 								}}
-								deleteProduct={() => {
+								decreaseQty={() => {
 									if (quantity > 1) setQuantity(prev => prev - 1);
 								}}
 							/>

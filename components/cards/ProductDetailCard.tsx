@@ -28,11 +28,11 @@ const ProductDetailCard: FC<ProductCartProps> = ({ product, deleteProduct, updat
 					<div className="product-buttons">
 						<QuantityControls
 							qty={quantity}
-							addProduct={() => {
+							increaseQty={() => {
 								setQuantity(prev => prev + 1);
 								updateProduct(product, quantity + 1);
 							}}
-							deleteProduct={() => {
+							decreaseQty={() => {
 								if (quantity > 1) {
 									setQuantity(prev => prev - 1);
 									updateProduct(product, quantity - 1);
