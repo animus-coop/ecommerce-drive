@@ -49,6 +49,7 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 							<Button
 								onClick={() => {
 									addProduct(item, quantity);
+									setQuantity(1);
 									toast.warn('Agregado exitosamente', {
 										autoClose: 1500,
 										icon: <CartIcon fill="#EA903C" size={24} width={16} height={16} />
