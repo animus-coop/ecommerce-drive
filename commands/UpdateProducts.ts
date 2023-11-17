@@ -7,7 +7,7 @@ import GoogleDriveFilesService from '../src/services/GoogleDriveFilesService';
 import { FileInfoType, productType } from '../src/global/types';
 import config from '../constants/config';
 
-function serializingProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
+function serializeProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
 	const serializeProducts = [];
 
 	products.map((product, i) => {
@@ -90,9 +90,9 @@ export async function updateProducts(): Promise<object> {
 		const GDservice = new GoogleDriveFilesService();
 		const filesInfo = await GDservice.retrieveFilesFromPicturesFolder();
 
-		const productsFormated: Array<productType> = serializingProducts(products, filesInfo);
-		await saveProductsOnMongo(productsFormated);
-		await saveCategories(productsFormated);
+		const formattedProducts: Array<productType> = serializeProducts(products, filesInfo);
+		await saveProductsOnMongo(formattedProducts);
+		await saveCategories(formattedProducts);
 
 		return { success: true };
 	} catch (e) {
