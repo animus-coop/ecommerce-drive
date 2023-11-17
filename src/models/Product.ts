@@ -5,7 +5,7 @@ interface BaseProductDocument extends ProductModel, Document {}
 
 const Product = new Schema<BaseProductDocument>({
 	stock: { type: 'number' },
-	code: { type: 'number' },
+	code: { type: 'number', index: true },
 	name: { type: 'string', index: true },
 	minimum: { type: 'string' },
 	price: { type: 'number' },
