@@ -1,7 +1,7 @@
 import ApiException from '../exceptions/ApiExeption';
 import { fetchData } from '../global/types';
 
-export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, onError }: fetchData<T>) {
+export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, onError, onFinally }: fetchData<T>) {
 	const serializeToString = (q: typeof query): string => {
 		let qs: string = '?';
 		Object.keys(q).map(field => (qs += `${encodeURIComponent(field)}=${encodeURIComponent(q[field])}&`));
@@ -9,7 +9,6 @@ export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, on
 		return `${qs.slice(0, -1)}`;
 	};
 	const buildedUrl = `${url}${query && Object.keys(query).length > 0 ? serializeToString(query) : ''}`;
-
 	return await fetch(buildedUrl, {
 		method,
 		...(data && { body: JSON.stringify(data) })
@@ -27,6 +26,11 @@ export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, on
 				onError(e);
 			} else {
 				throw new ApiException(e);
+			}
+		})
+		.finally(() => {
+			if (onFinally) {
+				onFinally();
 			}
 		});
 }

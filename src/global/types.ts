@@ -67,6 +67,7 @@ export type fetchData<T> = {
 	query?: T;
 	onSuccess?(response: any): void;
 	onError?(error: any): void;
+	onFinally?(): void;
 };
 
 export type sheetOrder = Array<{
