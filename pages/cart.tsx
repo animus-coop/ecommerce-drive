@@ -33,6 +33,7 @@ export default function Cart(props) {
 			method: `${isEditingOrder ? 'PUT' : 'POST'}`,
 			data: { products: cart.products, balance: cart.balance , total: cart.total },
 			onSuccess: () => {
+				cart.updateAllProducts(cart.products);
 				router.push('/#orderstored');
 				toast.warn(`Su pedido se ha ${isEditingOrder ? 'modificado' : 'realizado'} con éxito`, {
 					icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />

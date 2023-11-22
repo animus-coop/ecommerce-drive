@@ -5,7 +5,7 @@ export type CartProduct = {
 	picture?: string;
 	price?: number;
 	qty: number;
-	stock: number;
+	stock: number | null;
 	total: number;
 };
 
@@ -32,7 +32,7 @@ export type OrderType = Array<{userId:string, email: string; product: string; ca
 export type FileInfoType = Array<{ webViewLink: string; code: number }>;
 
 export type ProductModel = {
-	stock: number;
+	stock: number | null;
 	code: number;
 	name: string;
 	minimum: string;

@@ -5,18 +5,22 @@ type props = {
 	increaseQty(): void;
 	decreaseQty(): void;
 	qty: number;
+	moreAvailable: boolean;
 };
 
-const QuantityControls: FC<props> = ({ increaseQty, decreaseQty, qty }) => {
+const QuantityControls: FC<props> = ({ increaseQty, decreaseQty, qty, moreAvailable }) => {
 	return (
 		<>
-			<Text className="quantity-border" onClick={decreaseQty}>
+			<button className="quantity-button" onClick={decreaseQty}>
 				-
-			</Text>
+			</button>
 			<Text className="quantity">{qty}</Text>
-			<Text className="quantity-border" onClick={increaseQty}>
+			<button
+				disabled={!moreAvailable}
+				className={`quantity-button ${!moreAvailable && "unavailable"}`}
+				onClick={increaseQty}>
 				+
-			</Text>
+			</button>
 		</>
 	);
 };

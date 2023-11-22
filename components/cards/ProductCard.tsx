@@ -1,24 +1,31 @@
-import { Card, Grid, Text, Row, Button, Image } from '@nextui-org/react';
+import {Card, Grid, Text, Row, Button, Image, Loading} from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceLaughBeam } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
 import { CartIcon } from '../svg/CartIcon';
-import { FC, useState } from 'react';
+import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import { productType } from '../../src/global/types';
 import QuantityControls from '../QuantityControls';
 
 type props = {
 	item: productType;
-	addProduct(product: productType, qty: number): void;
+	addProduct(product: productType, qty: number, setLoading: Dispatch<SetStateAction<boolean>> ): void;
 };
 
 const ProductCard: FC<props> = ({ item, addProduct }) => {
+	const [loading, setLoading] = useState(false);
 	const [quantity, setQuantity] = useState(1);
+	const [moreAvailable, setMoreAvailable] = useState(item.stock !== 0);
+
+	useEffect(() => {
+		if (item.stock !== null && quantity >= item.stock) setMoreAvailable(false);
+		else setMoreAvailable(true);
+	}, [quantity]);
 
 	return (
 		<Grid xs={12} sm={12} md={12} lg={12} xl={12}>
 			<Card css={{ margin: 0, letterSpacing: 0 }}>
-				<Card.Body className="product-container">
+				<Card.Body className={`product-container ${item.stock === 0 && "unavailable"}`}>
 					<Grid.Container gap={1} justify="space-around">
 						<Grid xs={4}>
 							<Image objectFit="contain" src={item.picture} />
@@ -35,20 +42,27 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 					</Grid.Container>
 					<Row>
 						<Grid sm={7} xs={7} lg={6} md={6} xl={6} className="product-quantity" justify="center">
-							<QuantityControls
-								qty={quantity}
-								increaseQty={() => {
-									setQuantity(prev => prev + 1);
-								}}
-								decreaseQty={() => {
-									if (quantity > 1) setQuantity(prev => prev - 1);
-								}}
-							/>
+							{item.stock === 0 ? (
+								<Text>Sin stock</Text>
+							) : (
+								<QuantityControls
+									qty={quantity}
+									moreAvailable={moreAvailable}
+									increaseQty={() => {
+										if (!moreAvailable) return;
+										setQuantity(prev => prev + 1);
+									}}
+									decreaseQty={() => {
+										if (quantity > 1) setQuantity(prev => prev - 1);
+									}}
+								/>
+							)}
 						</Grid>
 						<Grid sm={3} xs={3} lg={6} md={6} xl={6}>
 							<Button
+								disabled={item.stock === 0|| loading}
 								onClick={() => {
-									addProduct(item, quantity);
+									addProduct(item, quantity, setLoading);
 									setQuantity(1);
 									toast.warn('Agregado exitosamente', {
 										autoClose: 1500,
@@ -60,7 +74,7 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 								auto
 								flat
 							>
-								Agregar
+								{loading ? (<Loading />) : 'Agregar'}
 							</Button>
 						</Grid>
 					</Row>

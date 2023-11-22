@@ -9,6 +9,11 @@ import Layout from './layout';
 import ButtonCart from '../components/ButtonCart';
 import useDebounce from '../src/hooks/debounceHook';
 import { useAppCtx } from '../src/context';
+import {Fetch} from "../src/hooks/fetchHook";
+import {CartProduct as productType} from "../src/global/types";
+import {toast} from "react-toastify";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 export { getServerSideProps } from '../src/ssp/products';
 
 export default function Products(props) {
@@ -23,8 +28,38 @@ export default function Products(props) {
 	const [loading, setLoading] = useState(true);
 
 	const debouncedSearch = useDebounce(search, 750);
-	const addProductToCart = (product, qty) => {
-		cart.addProduct({ ...product, qty });
+	const addProductAndUpdate = async (productToAdd, setLoading) => {
+		setLoading(true);
+		let updatedProducts = [];
+		if (cart.products.find(product => product.code === productToAdd.code)) {
+			updatedProducts = cart.products.map(product => {
+				if (product.code === productToAdd.code) {
+					const newQuantity = product.qty + productToAdd.qty;
+					return { ...productToAdd, qty: newQuantity, total: productToAdd.price * newQuantity };
+				}
+				return product;
+			});
+		} else {
+			updatedProducts = [...cart.products, {...productToAdd, total: productToAdd.price * productToAdd.qty	}];
+		}
+		console.log(`updatedProducts`, updatedProducts)
+		Fetch<{ products: Array<productType>; balance?:number; total: number }>({
+			url: `/api/orders${props.orderId ? `/${props.orderId}` : ''}`,
+			method: `${props.orderId ? 'PUT' : 'POST'}`,
+			data: { products: updatedProducts, balance: cart.balance , total: cart.total },
+			onSuccess: () => {
+				fetchData(currentPage, category, debouncedSearch);
+				cart.updateAllProducts(updatedProducts);
+				toast.warn(`Su pedido se ha ${props.orderId ? 'modificado' : 'realizado'} con éxito`, {
+					icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />
+				});
+			},
+			onError: e => {
+				console.warn(`error on saving order`, e);
+				fetchData(currentPage, category, debouncedSearch);
+			},
+			onFinally: () => setLoading(false)
+		});
 	};
 
 	useEffect(() => {
@@ -76,7 +111,7 @@ export default function Products(props) {
 								products.map(item => (
 									<Grid xs={12} sm={12} md={6} lg={4} xl={4} key={item.code}>
 										<ProductCard
-											addProduct={(product, qty) => addProductToCart(product, qty)}
+											addProduct={(product, qty, setLoading) => addProductAndUpdate({...product, qty}, setLoading)}
 											item={item}
 											key={item.code}
 										/>

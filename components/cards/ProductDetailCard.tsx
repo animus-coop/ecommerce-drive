@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, {FC, useEffect, useState} from 'react';
 import { Avatar, Grid, Text } from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -13,6 +13,12 @@ type ProductCartProps = {
 
 const ProductDetailCard: FC<ProductCartProps> = ({ product, deleteProduct, updateProduct }) => {
 	const [quantity, setQuantity] = useState(product.qty);
+	const [moreAvailable, setMoreAvailable] = useState(product.stock !== 0);
+
+	useEffect(() => {
+		if (product.stock !== null && quantity >= product.stock) setMoreAvailable(false);
+		else setMoreAvailable(true);
+	}, [quantity]);
 
 	return (
 		<Grid.Container className="product-cart">
@@ -28,7 +34,9 @@ const ProductDetailCard: FC<ProductCartProps> = ({ product, deleteProduct, updat
 					<div className="product-buttons">
 						<QuantityControls
 							qty={quantity}
+							moreAvailable={moreAvailable}
 							increaseQty={() => {
+								if (!moreAvailable) return;
 								setQuantity(prev => prev + 1);
 								updateProduct(product, quantity + 1);
 							}}

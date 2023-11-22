@@ -40,13 +40,16 @@ class ProductService extends BaseService {
 		if (!product) {
 			throw new Error('PRODUCT_NOT_FOUND');
 		}
-		return product.stock >= qty;
+		return product.stock === null || product.stock >= qty;
 	}
 
 	async updateProductStock(code: number, amount: number) {
 		const product = await Product.findOne({ code }).exec();
 		if (!product) {
 			throw new Error('PRODUCT_NOT_FOUND');
+		}
+		if (product.stock === null) {
+			return product;
 		}
 		const newStock = product.stock + amount;
 		if (newStock < 0) {

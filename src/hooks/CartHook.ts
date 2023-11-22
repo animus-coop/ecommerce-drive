@@ -65,7 +65,16 @@ export function useCart(cartSSR: Cart) {
 		});
 	}
 
+	const updateAllProducts = (products: Array<CartProduct>) => {
+		setCart({
+			balance: cart.balance,
+			hasUnsavedChanges: false,
+			products,
+			total: sumTotals(products)
+		});
+	}
+
 	const productExists = (code: number) => cart.products.find(product => product.code === code);
 
-	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts };
+	return { ...cart, updateProduct, addProduct, deleteProduct, clearProducts, updateAllProducts };
 }

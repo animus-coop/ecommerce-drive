@@ -31,9 +31,9 @@
     font-weight: 400;
     font-size: 18px;
     color: #333333;
-    margin: 0px !important;
+    margin: 0 !important;
   }
-  
+
   .title-buttons {
     padding-left: 10px;
     display: flex;
@@ -75,7 +75,12 @@
 }
 
 .loading-text-container {
-   margin: auto; 
-   width: 100%; 
+   margin: auto;
+   width: 100%;
    padding-top: 10vh;
+}
+
+.unavailable {
+  opacity: 0.5;
+  pointer-events: none;
 }

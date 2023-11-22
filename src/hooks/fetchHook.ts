@@ -15,10 +15,13 @@ export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, on
 	})
 		.then(async res => {
 			const response = await res.json();
+			if (!res.ok) {
+				console.log("response.error.message", res)
+				throw new Error(response.error.message);
+			}
 			if (onSuccess) {
 				onSuccess(response);
 			}
-
 			return response;
 		})
 		.catch(e => {
