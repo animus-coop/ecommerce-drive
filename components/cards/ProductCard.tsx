@@ -6,6 +6,7 @@ import { CartIcon } from '../svg/CartIcon';
 import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import { productType } from '../../src/global/types';
 import QuantityControls from '../QuantityControls';
+import StockBadge from "../StockBadge";
 
 type props = {
 	item: productType;
@@ -40,11 +41,10 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 							<Text className="product-price">${item.price}</Text>
 						</Grid>
 					</Grid.Container>
-					<Row>
-						<Grid sm={7} xs={7} lg={6} md={6} xl={6} className="product-quantity" justify="center">
-							{item.stock === 0 ? (
-								<Text>Sin stock</Text>
-							) : (
+					<Row align="center">
+						<Grid sm={7} xs={7} lg={6} md={6} xl={6} direction="column" justify="center" alignItems="center">
+							<>
+								<StockBadge stock={item.stock} />
 								<QuantityControls
 									qty={quantity}
 									moreAvailable={moreAvailable}
@@ -56,7 +56,7 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 										if (quantity > 1) setQuantity(prev => prev - 1);
 									}}
 								/>
-							)}
+							</>
 						</Grid>
 						<Grid sm={3} xs={3} lg={6} md={6} xl={6}>
 							<Button
