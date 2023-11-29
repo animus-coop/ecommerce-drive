@@ -643,16 +643,16 @@ var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_hel
 
 
 
-function Admin(props) {
+function Admin({ orders , count , status , user  }) {
     const { 0: editingDates , 1: setEditingDates  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(false);
-    const { 0: ordersCount , 1: setOrdersCount  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(props.currentOrders.count);
-    const { 0: currentStatus , 1: setCurrentStatus  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(props.currentStatus);
+    const { 0: ordersCount , 1: setOrdersCount  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(count);
+    const { 0: currentStatus , 1: setCurrentStatus  } = (0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(status);
     (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>(0,_helpers_notify__WEBPACK_IMPORTED_MODULE_8__/* .infoMessages */ .o)()
     , []);
     return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_layout__WEBPACK_IMPORTED_MODULE_3__["default"], {
         children: [
             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_navigation_Header__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
-                user: props.user,
+                user: user,
                 title: "Panel de administrador"
             }),
             /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_nextui_org_react__WEBPACK_IMPORTED_MODULE_2__.Container, {
@@ -674,7 +674,7 @@ function Admin(props) {
                                 children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_admin_OrdersCount__WEBPACK_IMPORTED_MODULE_6__/* ["default"] */ .Z, {
                                     ordersCount: ordersCount,
                                     setOrdersCount: setOrdersCount,
-                                    status: props.currentStatus.status
+                                    status: status.status
                                 })
                             }),
                             /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_2__.Grid, {
@@ -693,9 +693,9 @@ function Admin(props) {
                             })
                         ]
                     }),
-                    ordersCount && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_admin_OrdersList__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
-                        orders: props.currentOrders.orders
-                    })
+                    ordersCount ? /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_admin_OrdersList__WEBPACK_IMPORTED_MODULE_9__/* ["default"] */ .Z, {
+                        orders: orders
+                    }) : ""
                 ]
             })
         ]
@@ -719,11 +719,13 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var iron_session__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4014);
 /* harmony import */ var _utils_withIronSession__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5869);
 /* harmony import */ var _services_GoogleSheetService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3506);
-/* harmony import */ var _services_OrderService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(1751);
+/* harmony import */ var _services_OrderService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8057);
 /* harmony import */ var _services_ConfigService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(3507);
 /* harmony import */ var _constants_config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3075);
+/* harmony import */ var _utils_parse__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(2287);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([iron_session__WEBPACK_IMPORTED_MODULE_1__, _utils_withIronSession__WEBPACK_IMPORTED_MODULE_2__]);
 ([iron_session__WEBPACK_IMPORTED_MODULE_1__, _utils_withIronSession__WEBPACK_IMPORTED_MODULE_2__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -740,6 +742,7 @@ async function getServerSideProps(context) {
     };
     const cart = {
         products: [],
+        productsToDelete: [],
         balance: 0,
         total: 0
     };
@@ -768,6 +771,7 @@ async function getServerSideProps(context) {
                     price,
                     minimum,
                     qty,
+                    unsavedQty: 0,
                     total,
                     picture
                 })
@@ -780,13 +784,14 @@ async function getServerSideProps(context) {
             cart
         });
     }
-    const currentStatus = await configService.getCartStatus();
-    const currentOrders = await orderService.getCurrentOrders();
+    const status = await configService.getCartStatus();
+    const orders = await orderService.getAll();
     return {
         props: {
             user,
-            currentStatus,
-            currentOrders,
+            status: status,
+            orders: (0,_utils_parse__WEBPACK_IMPORTED_MODULE_7__/* ["default"] */ .Z)(orders),
+            count: orders ? orders.length : 0,
             cart
         }
     };
@@ -794,6 +799,19 @@ async function getServerSideProps(context) {
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 2287:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (/* export default binding */ __WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ function __WEBPACK_DEFAULT_EXPORT__(data) {
+    return JSON.parse(JSON.stringify(data));
+};
+
 
 /***/ }),
 
@@ -895,7 +913,7 @@ module.exports = import("react-toastify");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [531,366,251,386,507], () => (__webpack_exec__(2285)));
+var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,382,883,507], () => (__webpack_exec__(2285)));
 module.exports = __webpack_exports__;
 
 })();

@@ -315,7 +315,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 /* harmony import */ var iron_session__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4014);
 /* harmony import */ var _utils_withIronSession__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(5869);
 /* harmony import */ var _services_GoogleSheetService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3506);
-/* harmony import */ var _services_OrderService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(1751);
+/* harmony import */ var _services_OrderService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(8057);
 /* harmony import */ var _constants_config__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(3075);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([iron_session__WEBPACK_IMPORTED_MODULE_2__, _utils_withIronSession__WEBPACK_IMPORTED_MODULE_3__]);
 ([iron_session__WEBPACK_IMPORTED_MODULE_2__, _utils_withIronSession__WEBPACK_IMPORTED_MODULE_3__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
@@ -332,6 +332,7 @@ async function getServerSideProps(context) {
     const ironSession = await (0,iron_session__WEBPACK_IMPORTED_MODULE_2__.getIronSession)(context.req, context.res, _utils_withIronSession__WEBPACK_IMPORTED_MODULE_3__/* .sessionOptions */ .d);
     const cart = {
         products: [],
+        productsToDelete: [],
         balance: 0,
         total: 0
     };
@@ -360,6 +361,7 @@ async function getServerSideProps(context) {
                     price,
                     minimum,
                     qty,
+                    unsavedQty: 0,
                     total,
                     picture
                 })
@@ -481,7 +483,7 @@ module.exports = import("react-toastify");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [531,366,251,507], () => (__webpack_exec__(4186)));
+var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,507], () => (__webpack_exec__(4186)));
 module.exports = __webpack_exports__;
 
 })();

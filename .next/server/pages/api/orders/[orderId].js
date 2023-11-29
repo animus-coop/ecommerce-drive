@@ -33,7 +33,7 @@ module.exports = import("iron-session");;
 
 /***/ }),
 
-/***/ 1482:
+/***/ 9367:
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
@@ -88,17 +88,17 @@ async function updateOrder(req, res) {
             text: ""
         };
         (0,_helpers_sendEmail__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z)(mailData);
-        console.log("Pedido actualizado", {
-            email,
-            products
-        });
         res.status(200).json({
             error: false,
             message: "Order updated successfully"
         });
     } catch (error) {
         console.log(error, "error on update order");
-        res.status(500).json(error);
+        res.status(500).json({
+            error: {
+                message: error.message
+            }
+        });
     }
 };
 
@@ -114,7 +114,7 @@ __webpack_async_result__();
 var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [534,684,96,554,657], () => (__webpack_exec__(1482)));
+var __webpack_exports__ = __webpack_require__.X(0, [534,684,96,5,554,657], () => (__webpack_exec__(9367)));
 module.exports = __webpack_exports__;
 
 })();

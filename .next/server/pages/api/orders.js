@@ -75,7 +75,7 @@ async function postOrder(req, res) {
         }
         const currentSession = await (0,iron_session__WEBPACK_IMPORTED_MODULE_0__.getIronSession)(req, res, _src_utils_withIronSession__WEBPACK_IMPORTED_MODULE_3__/* .sessionOptions */ .d);
         const { email , name , id  } = currentSession.user;
-        await orderService.saveOrder({
+        await orderService.save({
             userId: id,
             products,
             email,
@@ -108,7 +108,9 @@ async function postOrder(req, res) {
         });
     } catch (error) {
         console.log(error, "Error saving order");
-        res.status(500).json(error);
+        res.status(500).json({
+            error
+        });
     }
 };
 
@@ -124,7 +126,7 @@ __webpack_async_result__();
 var __webpack_require__ = require("../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [534,684,96,554,657], () => (__webpack_exec__(6448)));
+var __webpack_exports__ = __webpack_require__.X(0, [534,684,96,5,554,657], () => (__webpack_exec__(6448)));
 module.exports = __webpack_exports__;
 
 })();

@@ -38,7 +38,7 @@ module.exports = require("tsyringe");
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ postOrders)
+/* harmony export */   "default": () => (/* binding */ ordersHandler)
 /* harmony export */ });
 /* harmony import */ var tsyringe__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6896);
 /* harmony import */ var tsyringe__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tsyringe__WEBPACK_IMPORTED_MODULE_0__);
@@ -47,7 +47,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-async function postOrders(req, res) {
+async function ordersHandler(req, res) {
     const orderService = tsyringe__WEBPACK_IMPORTED_MODULE_0__.container.resolve(_src_services_OrderService__WEBPACK_IMPORTED_MODULE_2__/* ["default"] */ .Z);
     if (req.method === "POST") {
         try {
@@ -64,7 +64,7 @@ async function postOrders(req, res) {
         }
     } else {
         try {
-            const currentOrders = await orderService.getCurrentOrders();
+            const currentOrders = await orderService.getAll();
             res.status(200).json(currentOrders);
         } catch (error) {
             console.log(error, "Error saving order");
@@ -83,7 +83,7 @@ async function postOrders(req, res) {
 var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [684,96,554,74,419], () => (__webpack_exec__(1858)));
+var __webpack_exports__ = __webpack_require__.X(0, [684,96,5,554,74,419], () => (__webpack_exec__(1858)));
 module.exports = __webpack_exports__;
 
 })();

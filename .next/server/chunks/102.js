@@ -35,15 +35,10 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "tsyringe"
 var external_tsyringe_ = __webpack_require__(6896);
-// EXTERNAL MODULE: ./src/exceptions/ApiExeption.ts
-var ApiExeption = __webpack_require__(8646);
 // EXTERNAL MODULE: external "mongoose"
 var external_mongoose_ = __webpack_require__(1185);
 var external_mongoose_default = /*#__PURE__*/__webpack_require__.n(external_mongoose_);
-// EXTERNAL MODULE: ./helpers/slug.ts
-var helpers_slug = __webpack_require__(5433);
 ;// CONCATENATED MODULE: ./src/models/Category.ts
-
 
 const Category = new external_mongoose_.Schema({
     name: {
@@ -53,24 +48,6 @@ const Category = new external_mongoose_.Schema({
         type: "string"
     }
 });
-Category.statics.getAll = async function() {
-    const categories = await this.find({}).select({
-        _id: 0,
-        __v: 0
-    });
-    return categories;
-};
-Category.statics.createCategory = async function(name) {
-    const slug = (0,helpers_slug/* slugify */.l)(name);
-    const newCategory = {
-        name,
-        slug
-    };
-    await this.create(newCategory);
-};
-Category.statics.deleteAll = async function() {
-    await this.deleteMany({});
-};
 if (!(external_mongoose_default()).models.Category) {
     (0,external_mongoose_.model)("Category", Category);
 }
@@ -78,6 +55,8 @@ if (!(external_mongoose_default()).models.Category) {
 
 // EXTERNAL MODULE: ./src/services/BaseService.ts
 var BaseService = __webpack_require__(9096);
+// EXTERNAL MODULE: ./helpers/slug.ts
+var helpers_slug = __webpack_require__(5433);
 ;// CONCATENATED MODULE: ./src/services/CategoryService.ts
 var _class;
 
@@ -89,33 +68,22 @@ let CategoryService = _class = _dec2(_class = _dec1(_class = _dec((_class = clas
     constructor(){
         super();
     }
-    async saveCategory(name) {
-        try {
-            await models_Category.createCategory(name);
-            return {
-                error: false
-            };
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
-        }
+    save(name) {
+        const slug = (0,helpers_slug/* slugify */.l)(name);
+        const newCategory = {
+            name,
+            slug
+        };
+        return models_Category.create(newCategory);
     }
-    async getAll() {
-        try {
-            const categories = await models_Category.getAll();
-            return categories;
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
-        }
+    getAll() {
+        return models_Category.find({}).select({
+            _id: 0,
+            __v: 0
+        });
     }
-    async clearAll() {
-        try {
-            await models_Category.deleteAll();
-            return {
-                error: false
-            };
-        } catch (error) {
-            throw new ApiExeption/* default */.Z(error);
-        }
+    deleteAll() {
+        return models_Category.deleteMany({});
     }
 }) || _class) || _class) || _class) || _class;
 /* harmony default export */ const services_CategoryService = (CategoryService);

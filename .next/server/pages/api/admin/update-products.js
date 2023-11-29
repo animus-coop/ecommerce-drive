@@ -109,14 +109,18 @@ class GoogleDriveFilesService extends GoogleAuthService/* default */.Z {
 
 
 
-function serializingProducts(products, files) {
-    const serializeProducts = [];
+function serializeProducts(products, files) {
+    const serializeProducts1 = [];
     products.map((product, i)=>{
         if (i !== 0) {
             const fileInfo = files.find((file)=>file.code === parseInt(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN])
             );
-            serializeProducts.push({
-                stock: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN] == "1",
+            let stock = Number(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN]);
+            if (isNaN(stock)) {
+                stock = null;
+            }
+            serializeProducts1.push({
+                stock: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN],
                 code: parseInt(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN]),
                 name: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN],
                 minimum: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN],
@@ -129,17 +133,14 @@ function serializingProducts(products, files) {
             });
         }
     });
-    return serializeProducts;
+    return serializeProducts1;
 }
 async function saveProductsOnMongo(products) {
     try {
         const productService = external_tsyringe_.container.resolve(ProductService/* default */.Z);
-        await productService.clearAll();
-        await Promise.all(products.map(async (product)=>{
-            if (product.stock) {
-                await productService.saveProduct(product);
-            }
-        }));
+        await productService.deleteAll();
+        await Promise.all(products.map((product)=>productService.save(product)
+        ));
         console.log("Products saved succesfully");
         return {
             success: true
@@ -154,16 +155,15 @@ async function saveProductsOnMongo(products) {
 async function saveCategories(products) {
     try {
         const categoryService = external_tsyringe_.container.resolve(CategoryService/* default */.Z);
-        const categories = [];
-        await categoryService.clearAll();
-        products.map((product)=>{
-            if (!categories.includes(product.categoryName)) {
-                categories.push(product.categoryName);
+        const categoriesToSave = [];
+        await categoryService.deleteAll();
+        products.forEach((product)=>{
+            if (!categoriesToSave.includes(product.categoryName)) {
+                categoriesToSave.push(product.categoryName);
             }
         });
-        Promise.all(categories.map(async (category)=>{
-            await categoryService.saveCategory(category);
-        }));
+        await Promise.all(categoriesToSave.map((category)=>categoryService.save(category)
+        ));
         console.log("Categories saved succesfully");
         return {
             success: true
@@ -181,9 +181,9 @@ async function updateProducts() {
         const products = await googleSheetInstance.getGoogleSheetData();
         const GDservice = new services_GoogleDriveFilesService();
         const filesInfo = await GDservice.retrieveFilesFromPicturesFolder();
-        const productsFormated = serializingProducts(products, filesInfo);
-        await saveProductsOnMongo(productsFormated);
-        await saveCategories(productsFormated);
+        const formattedProducts = serializeProducts(products, filesInfo);
+        await saveProductsOnMongo(formattedProducts);
+        await saveCategories(formattedProducts);
         return {
             success: true
         };
@@ -218,7 +218,7 @@ async function updateProductsOnDb(req, res) {
 var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [684,96,74,419,5,102], () => (__webpack_exec__(8592)));
+var __webpack_exports__ = __webpack_require__.X(0, [684,96,5,74,419,102], () => (__webpack_exec__(8592)));
 module.exports = __webpack_exports__;
 
 })();

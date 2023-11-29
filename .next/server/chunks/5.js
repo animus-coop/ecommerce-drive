@@ -3,29 +3,6 @@ exports.id = 5;
 exports.ids = [5];
 exports.modules = {
 
-/***/ 8646:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-class ApiException extends Error {
-    constructor(message){
-        super(message);
-        Object.setPrototypeOf(this, ApiException.prototype);
-    }
-    jsonOutPut() {
-        return {
-            error: true,
-            message: this.message
-        };
-    }
-}
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ApiException);
-
-
-/***/ }),
-
 /***/ 2005:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -37,8 +14,6 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: external "tsyringe"
 var external_tsyringe_ = __webpack_require__(6896);
-// EXTERNAL MODULE: ./src/exceptions/ApiExeption.ts
-var ApiExeption = __webpack_require__(8646);
 // EXTERNAL MODULE: external "mongoose"
 var external_mongoose_ = __webpack_require__(1185);
 var external_mongoose_default = /*#__PURE__*/__webpack_require__.n(external_mongoose_);
@@ -46,10 +21,11 @@ var external_mongoose_default = /*#__PURE__*/__webpack_require__.n(external_mong
 
 const Product = new external_mongoose_.Schema({
     stock: {
-        type: "boolean"
+        type: "number"
     },
     code: {
-        type: "number"
+        type: "number",
+        index: true
     },
     name: {
         type: "string",
@@ -73,50 +49,18 @@ const Product = new external_mongoose_.Schema({
     picture: {
         type: "string"
     }
+}, {
+    versionKey: false
 });
 Product.index({
     name: "text"
 });
-Product.statics.getProducts = async function(category, page) {
-    const limit = 60;
-    const productsCount = category ? await this.countDocuments({
+Product.statics.getDocumentsCount = async function(category) {
+    return category ? await this.countDocuments({
         category
     }) : await this.countDocuments();
-    const query = category ? {
-        category
-    } : {};
-    const products = await this.find(query).select({
-        _id: 0,
-        __v: 0
-    }).limit(limit).skip(limit * (page - 1)).sort({
-        order: 1
-    });
-    const totalPages = Math.ceil(productsCount / limit);
-    return {
-        products,
-        totalPages
-    };
 };
-Product.statics.createProduct = async function(product) {
-    await this.create(product);
-};
-// Product.statics.getByCategory = async function (category: string, page: number) {
-// 	const limit = 60;
-// 	const productsCount = await this.countDocuments({ category });
-// 	const products = await this.find({ category })
-// 		.select({ _id: 0, __v: 0 })
-// 		.limit(limit)
-// 		.skip(limit * (page - 1));
-// 	if (!products.length) {
-// 		throw new Error(`No products found on category ${category}`);
-// 	}
-// 	const totalPages = Math.ceil(productsCount / limit);
-// 	return { products, totalPages };
-// };
-Product.statics.deleteAll = async function() {
-    await this.deleteMany({});
-};
-Product.statics.search = async function(category, search) {
+Product.statics.search = async function(search, category) {
     const query = category ? {
         category,
         $text: {
@@ -153,52 +97,74 @@ var _class;
 
 
 
-
 var _dec = typeof Reflect !== "undefined" && typeof Reflect.metadata === "function" && Reflect.metadata("design:paramtypes", []), _dec1 = typeof Reflect !== "undefined" && typeof Reflect.metadata === "function" && Reflect.metadata("design:type", Function), _dec2 = (0,external_tsyringe_.singleton)();
 let ProductService = _class = _dec2(_class = _dec1(_class = _dec((_class = class ProductService extends BaseService/* default */.Z {
     constructor(){
         super();
     }
-    async saveProduct(product) {
-        try {
-            await models_Product.createProduct(product);
-            return {
-                error: false
-            };
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
-        }
+    save(product) {
+        return models_Product.create(product);
     }
-    async getProducts(category, page = 1) {
-        try {
-            const products = await models_Product.getProducts(category, page);
-            return products;
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
-        }
+    async get(category, page = 1) {
+        const limit = 60;
+        const productsCount = await models_Product.getDocumentsCount(category);
+        const query = category ? {
+            category
+        } : {};
+        const products = await models_Product.find(query).select({
+            _id: 0
+        }).limit(limit).skip(limit * (page - 1)).sort({
+            order: 1
+        });
+        const totalPages = Math.ceil(productsCount / limit);
+        return {
+            products,
+            totalPages
+        };
     }
-    // async getByCategory(category: string, page: number = 1) {
-    // 	try {
-    // 		const products = await Product.getByCategory(category, page);
-    // 		return products;
-    // 	} catch (e) {
-    // 		throw new ApiException(e);
-    // 	}
-    // }
+    getOne(code) {
+        return models_Product.findOne({
+            code
+        }).exec();
+    }
+    getProductsByCode(productCodes) {
+        return models_Product.find({
+            code: {
+                $in: productCodes
+            }
+        }).exec();
+    }
     async searchProduct(query, category) {
-        try {
-            const products = await models_Product.search(query, category);
-            return products;
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
-        }
+        return models_Product.search(query, category);
     }
-    async clearAll() {
-        try {
-            return models_Product.deleteAll();
-        } catch (e) {
-            throw new ApiExeption/* default */.Z(e);
+    deleteAll() {
+        return models_Product.deleteMany({});
+    }
+    async productHasEnoughStock(code, qty) {
+        const product = await models_Product.findOne({
+            code
+        }).exec();
+        if (!product) {
+            throw new Error("PRODUCT_NOT_FOUND");
         }
+        return product.stock === null || product.stock >= qty;
+    }
+    async updateProductStock(code, amount) {
+        const product = await models_Product.findOne({
+            code
+        }).exec();
+        if (!product) {
+            throw new Error("PRODUCT_NOT_FOUND");
+        }
+        if (product.stock === null) {
+            return product;
+        }
+        const newStock = product.stock + amount;
+        if (newStock < 0) {
+            throw new Error("PRODUCT_STOCK_NOT_ENOUGH");
+        }
+        product.stock = newStock;
+        return product.save();
     }
 }) || _class) || _class) || _class) || _class;
 /* harmony default export */ const services_ProductService = (ProductService);

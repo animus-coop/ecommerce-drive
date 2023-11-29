@@ -34,16 +34,42 @@ __webpack_require__.r(__webpack_exports__);
 async function getProducts(req, res) {
     const productService = tsyringe__WEBPACK_IMPORTED_MODULE_0__.container.resolve(_src_services_ProductService__WEBPACK_IMPORTED_MODULE_1__/* ["default"] */ .Z);
     try {
+        if (req.query.codes) {
+            // @ts-ignore
+            let codes = req.query.codes.split(",");
+            if (codes.length === 0 || !Array.isArray(codes)) {
+                return res.status(400).json({
+                    error: true,
+                    message: "INVALID_CODES"
+                });
+            }
+            codes = codes.map((code)=>Number(code)
+            );
+            const products = await productService.getProductsByCode(codes);
+            return res.status(200).json({
+                products
+            });
+        }
         const { search , category , page  } = req.query;
         if (search) {
-            const products = await productService.searchProduct(category, search);
-            return res.status(200).json(products);
+            const products = await productService.searchProduct(search, category);
+            return res.status(200).json({
+                products
+            });
         }
-        const result = await productService.getProducts(category, page);
+        const pageNumber = Number(page);
+        if (isNaN(pageNumber) || pageNumber <= 0) {
+            return res.status(400).json({
+                error: true,
+                message: "INVALID_PAGE"
+            });
+        }
+        const result = await productService.get(category, pageNumber);
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json({
-            error: error.jsonOutPut()
+            error: true,
+            message: error.message
         });
     }
 };
