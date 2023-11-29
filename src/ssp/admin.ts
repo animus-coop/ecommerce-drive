@@ -15,7 +15,7 @@ export async function getServerSideProps(context) {
 	const ironSession: IronSessionData = await getIronSession(context.req, context.res, sessionOptions);
 	const user: UserLogged = ironSession.user ?? { logged: false };
 
-	const cart = { products: [], balance:0, total: 0 };
+	const cart = { products: [], productsToDelete: [], balance: 0, total: 0 };
 
 	if(ironSession.user && !ironSession.user.id){
 		context.req.session.destroy();
@@ -42,6 +42,7 @@ export async function getServerSideProps(context) {
 				price,
 				minimum,
 				qty,
+				unsavedQty: 0,
 				total,
 				picture
 			}));

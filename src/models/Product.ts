@@ -1,13 +1,11 @@
-import { truncate } from 'fs/promises';
 import mongoose, { Schema, model, Document } from 'mongoose';
 import { ProductModel } from '../global/types';
-import category from "./Category";
 
 interface BaseProductDocument extends ProductModel, Document {}
 
 const Product = new Schema<BaseProductDocument>({
-	stock: { type: 'boolean' },
-	code: { type: 'number' },
+	stock: { type: 'number' },
+	code: { type: 'number', index: true },
 	name: { type: 'string', index: true },
 	minimum: { type: 'string' },
 	price: { type: 'number' },

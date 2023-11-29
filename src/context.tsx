@@ -1,17 +1,27 @@
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import { Cart } from './global/types';
 import { useCart } from './hooks/CartHook';
 
 export const AppCtx = createContext<ReturnType<typeof useCart>>({
-	balance: 0,
-	hasUnsavedChanges: false,
-	products: [],
 	total: 0,
-	addProduct: () => {},
-	clearProducts: () => {},
-	deleteProduct: () => {},
+	balance: 0,
+	products: [],
+	productsToDelete: [],
+	hasUnsavedChanges: false,
 	updateProduct: () => {},
-	setHasUnsavedChanges: () => {},
+	addProduct: () => {},
+	deleteProduct: () => {},
+	clearProducts: () => {},
+	updateAllProducts: () => {},
+	syncProductsStock: () => {
+		return new Promise((resolve, reject) => {
+			resolve();
+		});
+	},
+	resetUnsavedQtyForProduct: () => {},
+	resetChangesAfterSave: () => {},
+	getUnsavedQtyForProduct: () => 0,
+
 });
 
 export const AppCtxProvider = ({ cart, children }: { cart: Cart; children: React.ReactNode }) => {

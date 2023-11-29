@@ -1,11 +1,13 @@
-export type ProductCart = {
+export type CartProduct = {
 	code: number;
 	name: string;
-	qty: number;
-	total: number;
-	price?: number;
 	minimum: string;
 	picture?: string;
+	price?: number;
+	qty: number;
+	unsavedQty: number;
+	stock: number | null;
+	total: number;
 };
 
 export type UserLogged = {
@@ -20,7 +22,8 @@ export type UserLogged = {
 export type Cart = {
 	balance?: number;
 	hasUnsavedChanges?: boolean;
-	products: Array<ProductCart>;
+	products: Array<CartProduct>;
+	productsToDelete: Array<CartProduct>;
 	total: number;
 };
 
@@ -31,7 +34,7 @@ export type OrderType = Array<{userId:string, email: string; product: string; ca
 export type FileInfoType = Array<{ webViewLink: string; code: number }>;
 
 export type ProductModel = {
-	stock: boolean;
+	stock: number | null;
 	code: number;
 	name: string;
 	minimum: string;
@@ -66,6 +69,7 @@ export type fetchData<T> = {
 	query?: T;
 	onSuccess?(response: any): void;
 	onError?(error: any): void;
+	onFinally?(): void;
 };
 
 export type sheetOrder = Array<{
@@ -76,7 +80,7 @@ export type sheetOrder = Array<{
 }>;
 
 export type productType = {
-	stock: boolean;
+	stock: number;
 	code: number;
 	name: string;
 	minimum: string;
@@ -89,6 +93,6 @@ export type productType = {
 };
 
 export type orderData = {
-	products: productType[];
+	products: CartProduct[];
 	total: number;
 }

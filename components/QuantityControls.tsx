@@ -2,22 +2,26 @@ import { Text } from '@nextui-org/react';
 import React, { FC } from 'react';
 
 type props = {
-	addProduct(): void;
-	deleteProduct(): void;
+	increaseQty(): void;
+	decreaseQty(): void;
 	qty: number;
+	moreAvailable: boolean;
 };
 
-const QuantityControls: FC<props> = ({ addProduct, deleteProduct, qty }) => {
+const QuantityControls: FC<props> = ({ increaseQty, decreaseQty, qty, moreAvailable }) => {
 	return (
-		<>
-			<Text className="quantity-border" onClick={deleteProduct}>
+		<div className="product-quantity">
+			<button className="quantity-button" onClick={decreaseQty}>
 				-
-			</Text>
+			</button>
 			<Text className="quantity">{qty}</Text>
-			<Text className="quantity-border" onClick={addProduct}>
+			<button
+				disabled={!moreAvailable}
+				className={`quantity-button ${!moreAvailable && "unavailable"}`}
+				onClick={increaseQty}>
 				+
-			</Text>
-		</>
+			</button>
+		</div>
 	);
 };
 

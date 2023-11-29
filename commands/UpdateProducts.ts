@@ -7,7 +7,7 @@ import GoogleDriveFilesService from '../src/services/GoogleDriveFilesService';
 import { FileInfoType, productType } from '../src/global/types';
 import config from '../constants/config';
 
-function serializingProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
+function serializeProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
 	const serializeProducts = [];
 
 	products.map((product, i) => {
@@ -15,8 +15,12 @@ function serializingProducts(products: Array<Array<string>>, files: FileInfoType
 			const fileInfo = files.find(
 				file => file.code === parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN])
 			);
+			let stock = Number(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN]);
+			if (isNaN(stock)) {
+				stock = null;
+			}
 			serializeProducts.push({
-				stock: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN] == '1',
+				stock: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN],
 				code: parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN]),
 				name: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN],
 				minimum: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN],
@@ -35,17 +39,8 @@ function serializingProducts(products: Array<Array<string>>, files: FileInfoType
 async function saveProductsOnMongo(products: Array<productType>): Promise<object> {
 	try {
 		const productService = container.resolve(ProductService);
-
 		await productService.deleteAll();
-
-		await Promise.all(
-			products.map(async product => {
-				if (product.stock) {
-					await productService.save(product);
-				}
-			})
-		);
-
+		await Promise.all(products.map(product => productService.save(product)));
 		console.log('Products saved succesfully');
 		return { success: true };
 	} catch (e) {
@@ -57,23 +52,14 @@ async function saveProductsOnMongo(products: Array<productType>): Promise<object
 async function saveCategories(products: Array<productType>): Promise<object> {
 	try {
 		const categoryService = container.resolve(CategoryService);
-
-		const categories = [];
-
+		const categoriesToSave = [];
 		await categoryService.deleteAll();
-
-		products.map(product => {
-			if (!categories.includes(product.categoryName)) {
-				categories.push(product.categoryName);
+		products.forEach(product => {
+			if (!categoriesToSave.includes(product.categoryName)) {
+				categoriesToSave.push(product.categoryName);
 			}
 		});
-
-		Promise.all(
-			categories.map(async category => {
-				await categoryService.save(category);
-			})
-		);
-
+		await Promise.all(categoriesToSave.map(category => categoryService.save(category)));
 		console.log('Categories saved succesfully');
 		return { success: true };
 	} catch (e) {
@@ -90,9 +76,9 @@ export async function updateProducts(): Promise<object> {
 		const GDservice = new GoogleDriveFilesService();
 		const filesInfo = await GDservice.retrieveFilesFromPicturesFolder();
 
-		const productsFormated: Array<productType> = serializingProducts(products, filesInfo);
-		await saveProductsOnMongo(productsFormated);
-		await saveCategories(productsFormated);
+		const formattedProducts: Array<productType> = serializeProducts(products, filesInfo);
+		await saveProductsOnMongo(formattedProducts);
+		await saveCategories(formattedProducts);
 
 		return { success: true };
 	} catch (e) {

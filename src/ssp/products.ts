@@ -35,12 +35,8 @@ export async function getServerSideProps(context) {
 
 	const user: UserLogged = ironSession.user ?? { logged: false };
 
-	const cart = {
-		balance: 0,
-		hasUnsavedChanges: false,
-		products: [],
-		total: 0
-	};
+	const cart = { balance: 0, products: [], productsToDelete: [], total: 0 };
+	let orderId = null;
 
 	if (user.logged) {
 		const orderService = container.resolve(OrderService);
@@ -50,12 +46,14 @@ export async function getServerSideProps(context) {
 		const loggedUser = users.find(matchingUser => matchingUser[config.GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN] === user.email);
 		cart.balance = parseFloat(loggedUser[config.GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN]);
 		if (ModelResponse) {
+			orderId = ModelResponse._id.toString();
 			cart.products = ModelResponse.products.map(({ code, name, price, minimum, qty, total, picture }) => ({
 				code,
 				name,
 				price,
 				minimum,
 				qty,
+				unsavedQty: 0,
 				total,
 				picture
 			}));
@@ -63,5 +61,5 @@ export async function getServerSideProps(context) {
 		}
 	}
 
-	return { props: { cartStatus: getIsOpen, user, cart } };
+	return { props: { cartStatus: getIsOpen, user, cart, orderId } };
 }

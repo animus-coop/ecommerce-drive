@@ -55,17 +55,20 @@ p {
   background-color: #000000;
 
 }
+.info-badge {
+  padding-bottom: 5px;
+}
 .product-quantity {
   display: flex;
   align-items: center;
 }
-.quantity-border {
+.quantity-button {
+  border-style: none;
   background-color: #f2f2f2;
   border-radius: 50%;
   height: 34px;
   width: 34px;
   text-align: center;
-  font-weight: 500px;
   line-height: 24px;
   font-size: 24px;
   display: flex;
@@ -75,7 +78,7 @@ p {
 }
 .quantity {
   color: #333333;
-  padding: 0px 10px 0px 10px;
+  padding: 0 10px 0 10px;
 }
 .details-container {
   flex-direction: column;
