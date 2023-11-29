@@ -90,6 +90,21 @@ class OrderService extends BaseService {
 		return Order.deleteMany({}).exec();
 	}
 
+	async getAllOrderedProductsQuantitiesByCode() {
+		const allOrders = await Order.find({});
+		const productsQuantityByCode = {};
+		allOrders.map((order: OrderI) => {
+			order.products.map((product) => {
+				if (productsQuantityByCode[product.code]) {
+					productsQuantityByCode[product.code] += product.qty;
+				} else {
+					productsQuantityByCode[product.code] = product.qty;
+				}
+			});
+		});
+		return productsQuantityByCode;
+	}
+
 	private getProductsThatNeedStockUpdate(incomingProducts: Array<CartProduct>, existingProducts: Array<CartProduct>) {
 		const removedProducts = existingProducts
 			.filter((existingProduct: CartProduct) => {

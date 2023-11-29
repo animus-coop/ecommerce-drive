@@ -6,6 +6,7 @@ import { slugify } from '../helpers/slug';
 import GoogleDriveFilesService from '../src/services/GoogleDriveFilesService';
 import { FileInfoType, productType } from '../src/global/types';
 import config from '../constants/config';
+import OrderService from "../src/services/OrderService";
 
 function serializeProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
 	const serializeProducts = [];
@@ -15,12 +16,14 @@ function serializeProducts(products: Array<Array<string>>, files: FileInfoType):
 			const fileInfo = files.find(
 				file => file.code === parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN])
 			);
-			let stock = Number(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN]);
-			if (isNaN(stock)) {
+			let stock: string | number = product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN];
+			if (stock === "" || isNaN(Number(stock))) {
 				stock = null;
+			} else {
+				stock = Number(stock);
 			}
 			serializeProducts.push({
-				stock: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN],
+				stock,
 				code: parseInt(product[config.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN]),
 				name: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN],
 				minimum: product[config.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN],
@@ -38,7 +41,18 @@ function serializeProducts(products: Array<Array<string>>, files: FileInfoType):
 
 async function saveProductsOnMongo(products: Array<productType>): Promise<object> {
 	try {
+		const orderService = container.resolve(OrderService);
 		const productService = container.resolve(ProductService);
+		const orderedProductsQuantitiesByCode = await orderService.getAllOrderedProductsQuantitiesByCode();
+		products.map(product => {
+			if (product.stock !== null && orderedProductsQuantitiesByCode[product.code]) {
+				if (product.stock < orderedProductsQuantitiesByCode[product.code]) {
+					product.stock = 0;
+				} else {
+					product.stock -= orderedProductsQuantitiesByCode[product.code];
+				}
+			}
+		});
 		await productService.deleteAll();
 		await Promise.all(products.map(product => productService.save(product)));
 		console.log('Products saved succesfully');
