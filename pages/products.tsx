@@ -134,7 +134,10 @@ export default function Products(props) {
 									className={'paginator'}
 									initialPage={1}
 									total={totalPages}
-									onChange={page => fetchData(page, category, debouncedSearch)}
+									onChange={page => {
+										fetchData(page, category, debouncedSearch);
+										window.scrollTo({top: 200, left: 0, behavior: 'smooth' });
+									}}
 									color="warning"
 									page={currentPage}
 								/>
