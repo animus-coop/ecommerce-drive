@@ -8,16 +8,16 @@ export async function Fetch<T>({ url, method = 'GET', data, query, onSuccess, on
 
 		return `${qs.slice(0, -1)}`;
 	};
-	const buildedUrl = `${url}${query && Object.keys(query).length > 0 ? serializeToString(query) : ''}`;
-	return await fetch(buildedUrl, {
+	const builtUrl = `${url}${query && Object.keys(query).length > 0 ? serializeToString(query) : ''}`;
+	return await fetch(builtUrl, {
 		method,
 		...(data && { body: JSON.stringify(data) })
 	})
 		.then(async res => {
 			const response = await res.json();
 			if (!res.ok) {
-				console.log("response.error.message", res)
-				throw new Error(response.error.message);
+				const message = response.error.message || "GENERIC_ERROR";
+				throw new Error(message);
 			}
 			if (onSuccess) {
 				onSuccess(response);

@@ -5,6 +5,7 @@ export type CartProduct = {
 	picture?: string;
 	price?: number;
 	qty: number;
+	unsavedQty: number;
 	stock: number | null;
 	total: number;
 };
@@ -22,6 +23,7 @@ export type Cart = {
 	balance?: number;
 	hasUnsavedChanges?: boolean;
 	products: Array<CartProduct>;
+	productsToDelete: Array<CartProduct>;
 	total: number;
 };
 

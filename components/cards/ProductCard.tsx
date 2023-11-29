@@ -1,8 +1,6 @@
 import {Card, Grid, Text, Row, Button, Image, Loading} from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceLaughBeam } from '@fortawesome/free-solid-svg-icons';
-import { toast } from 'react-toastify';
-import { CartIcon } from '../svg/CartIcon';
 import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
 import { productType } from '../../src/global/types';
 import QuantityControls from '../QuantityControls';
@@ -64,10 +62,6 @@ const ProductCard: FC<props> = ({ item, addProduct }) => {
 								onClick={() => {
 									addProduct(item, quantity, setLoading);
 									setQuantity(1);
-									toast.warn('Agregado exitosamente', {
-										autoClose: 1500,
-										icon: <CartIcon fill="#EA903C" size={24} width={16} height={16} />
-									});
 								}}
 								className="button-text"
 								css={{ backgroundColor: '#F29400', color: 'black', fontWeight: 400 }}

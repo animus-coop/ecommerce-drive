@@ -12,12 +12,26 @@ import { useAppCtx } from '../src/context';
 import {Fetch} from "../src/hooks/fetchHook";
 import {CartProduct as productType} from "../src/global/types";
 import {toast} from "react-toastify";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
+import Swal from 'sweetalert2'
+import {productHasEnoughStock} from "../helpers/products";
+import {noStockAlert} from "../helpers/alerts";
+import {CartIcon} from "../components/svg/CartIcon";
+import {useRouter} from "next/router";
 export { getServerSideProps } from '../src/ssp/products';
 
+function mapErrors(error) {
+	if (error.message === "PRODUCT_STOCK_NOT_ENOUGH") {
+		return "No hay suficiente products.ts para este producto"
+	}
+	return "Algo salió mal, por favor intente nuevamente"
+}
 export default function Products(props) {
 	const cart = useAppCtx();
+	const router = useRouter();
+
+	const redirectToCart = () => {
+		router.push('/cart');
+	}
 
 	const [products, setProducts] = useState([]);
 	const [search, setSearch] = useState('');
@@ -28,34 +42,30 @@ export default function Products(props) {
 	const [loading, setLoading] = useState(true);
 
 	const debouncedSearch = useDebounce(search, 750);
-	const addProductAndUpdate = async (productToAdd, setLoading) => {
+
+	const addProduct = async (productToAdd, setLoading) => {
 		setLoading(true);
-		let updatedProducts = [];
-		if (cart.products.find(product => product.code === productToAdd.code)) {
-			updatedProducts = cart.products.map(product => {
-				if (product.code === productToAdd.code) {
-					const newQuantity = product.qty + productToAdd.qty;
-					return { ...productToAdd, qty: newQuantity, total: productToAdd.price * newQuantity };
+		Fetch<{ product: productType }>({
+			url: `/api/products/${productToAdd.code}`,
+			onSuccess: ({product}) => {
+				const unsavedQty = cart.getUnsavedQtyForProduct(productToAdd.code);
+ 				if (!productHasEnoughStock(product, productToAdd.qty + unsavedQty)) {
+					fetchData(currentPage, category, debouncedSearch);
+					noStockAlert(product.stock, unsavedQty, redirectToCart);
+					return;
 				}
-				return product;
-			});
-		} else {
-			updatedProducts = [...cart.products, {...productToAdd, total: productToAdd.price * productToAdd.qty	}];
-		}
-		console.log(`updatedProducts`, updatedProducts)
-		Fetch<{ products: Array<productType>; balance?:number; total: number }>({
-			url: `/api/orders${props.orderId ? `/${props.orderId}` : ''}`,
-			method: `${props.orderId ? 'PUT' : 'POST'}`,
-			data: { products: updatedProducts, balance: cart.balance , total: cart.total },
-			onSuccess: () => {
-				fetchData(currentPage, category, debouncedSearch);
-				cart.updateAllProducts(updatedProducts);
-				toast.warn(`Su pedido se ha ${props.orderId ? 'modificado' : 'realizado'} con éxito`, {
-					icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />
+				cart.addProduct(productToAdd);
+				toast.warn(`El producto se agregó al carrito`, {
+					icon: <CartIcon fill="#EA903C" size={24} width={16} height={16} />
 				});
 			},
 			onError: e => {
-				console.warn(`error on saving order`, e);
+				console.log("ERROR", e)
+				Swal.fire({
+					icon: "error",
+					title: "Algo salió mal",
+					text: mapErrors(e)
+				});
 				fetchData(currentPage, category, debouncedSearch);
 			},
 			onFinally: () => setLoading(false)
@@ -111,7 +121,7 @@ export default function Products(props) {
 								products.map(item => (
 									<Grid xs={12} sm={12} md={6} lg={4} xl={4} key={item.code}>
 										<ProductCard
-											addProduct={(product, qty, setLoading) => addProductAndUpdate({...product, qty}, setLoading)}
+											addProduct={(product, qty, setLoading) => addProduct({...product, qty}, setLoading)}
 											item={item}
 											key={item.code}
 										/>

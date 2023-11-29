@@ -10,7 +10,7 @@ type props = {
 
 const QuantityControls: FC<props> = ({ increaseQty, decreaseQty, qty, moreAvailable }) => {
 	return (
-		<>
+		<div className="product-quantity">
 			<button className="quantity-button" onClick={decreaseQty}>
 				-
 			</button>
@@ -21,7 +21,7 @@ const QuantityControls: FC<props> = ({ increaseQty, decreaseQty, qty, moreAvaila
 				onClick={increaseQty}>
 				+
 			</button>
-		</>
+		</div>
 	);
 };
 

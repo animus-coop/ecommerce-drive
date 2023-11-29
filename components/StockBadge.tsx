@@ -3,25 +3,25 @@ import {FC} from "react";
 
 type props = {
     stock: number | null;
+    getStockBadgeText?: (stock: number | null) => string;
 }
-const StockBadge: FC<props> = ({stock}) => {
+const StockBadge: FC<props> = ({stock, getStockBadgeText}) => {
+    const getDefaultStockBadgeText = (stock: number | null) => {
+        if (stock === 0) return 'Sin stock';
+        if (stock === null || stock > 10) return 'Stock disponible';
+        return `Última${stock === 1 ? ' unidad' : `s ${stock} unidades`}!`;
+    }
+
+    const getStockBadgeColor = (stock: number | null) => {
+        if (stock === 0) return 'error';
+        if (stock === null || stock > 10) return 'success';
+        return 'warning';
+    }
     return (
-        <>
-            {stock === 0 ? (
-                <Badge color="error">Sin stock</Badge>
-            ) : (
-                <>
-                    {(stock === null || stock > 10) ? (
-                        <Badge className="stock-badge" color="success">Stock disponible</Badge>
-                    ) : (
-                        <Badge className="stock-badge" color="warning">
-                            Última {stock === 1 ? "unidad" : `s ${stock} unidades`}!
-                        </Badge>
-                    )}
-                </>
-            )}
-        </>
-    );
+        <Badge color={getStockBadgeColor(stock)} className="info-badge">
+            {getStockBadgeText ? getStockBadgeText(stock) : getDefaultStockBadgeText(stock)}
+        </Badge>
+    )
 };
 
 export default StockBadge;

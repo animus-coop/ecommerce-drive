@@ -27,6 +27,14 @@ class ProductService extends BaseService {
 		return { products, totalPages };
 	}
 
+	getOne(code: number) {
+		return Product.findOne({ code }).exec();
+	}
+
+	getProductsByCode(productCodes: Array<number>) {
+		return Product.find({ code: { $in: productCodes } }).exec();
+	}
+
 	async searchProduct(query, category) {
 		return Product.search(query, category);
 	}

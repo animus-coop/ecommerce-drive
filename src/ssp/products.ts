@@ -35,7 +35,7 @@ export async function getServerSideProps(context) {
 
 	const user: UserLogged = ironSession.user ?? { logged: false };
 
-	const cart = { products: [], balance:0, total: 0 };
+	const cart = { balance: 0, products: [], productsToDelete: [], total: 0 };
 	let orderId = null;
 
 	if (user.logged) {
@@ -53,6 +53,7 @@ export async function getServerSideProps(context) {
 				price,
 				minimum,
 				qty,
+				unsavedQty: 0,
 				total,
 				picture
 			}));
