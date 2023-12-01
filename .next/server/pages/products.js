@@ -379,7 +379,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(271);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var _helpers_products__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(6457);
-/* harmony import */ var _helpers_alerts__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(2122);
+/* harmony import */ var _src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5604);
 /* harmony import */ var _components_svg_CartIcon__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(428);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(1853);
 /* harmony import */ var next_router__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(next_router__WEBPACK_IMPORTED_MODULE_17__);
@@ -442,7 +442,7 @@ function Products(props) {
                 const unsavedQty = cart.getUnsavedQtyForProduct(productToAdd.code);
                 if (!(0,_helpers_products__WEBPACK_IMPORTED_MODULE_19__/* .productHasEnoughStock */ .t)(product, productToAdd.qty + unsavedQty)) {
                     fetchData(currentPage, category1, debouncedSearch1);
-                    (0,_helpers_alerts__WEBPACK_IMPORTED_MODULE_15__/* .noStockAlert */ .n)(product.stock, unsavedQty, redirectToCart);
+                    (0,_src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__/* .noStockAlert */ .n2)(product.stock, unsavedQty, redirectToCart);
                     return;
                 }
                 cart.addProduct(productToAdd);
@@ -584,8 +584,14 @@ function Products(props) {
                                         className: "paginator",
                                         initialPage: 1,
                                         total: totalPages,
-                                        onChange: (page)=>fetchData(page, category1, debouncedSearch1)
-                                        ,
+                                        onChange: (page)=>{
+                                            fetchData(page, category1, debouncedSearch1);
+                                            window.scrollTo({
+                                                top: 200,
+                                                left: 0,
+                                                behavior: "smooth"
+                                            });
+                                        },
                                         color: "warning",
                                         page: currentPage
                                     })
@@ -694,15 +700,15 @@ async function getServerSideProps(context) {
     let orderId = null;
     if (user.logged) {
         const orderService = tsyringe__WEBPACK_IMPORTED_MODULE_1__.container.resolve(_services_OrderService__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z);
-        const ModelResponse = await orderService.getUserOrder(user.email);
+        const userOrder = await orderService.getUserOrder(user.email);
         const googleSheetInstance = new _services_GoogleSheetService__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z("users");
         const users = await googleSheetInstance.getGoogleSheetData();
         const loggedUser = users.find((matchingUser)=>matchingUser[_constants_config__WEBPACK_IMPORTED_MODULE_6__/* ["default"].GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN] === user.email
         );
         cart.balance = parseFloat(loggedUser[_constants_config__WEBPACK_IMPORTED_MODULE_6__/* ["default"].GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN]);
-        if (ModelResponse) {
-            orderId = ModelResponse._id.toString();
-            cart.products = ModelResponse.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
+        if (userOrder) {
+            orderId = userOrder._id.toString();
+            cart.products = userOrder.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
                     code,
                     name,
                     price,
@@ -837,7 +843,7 @@ module.exports = import("react-toastify");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,382,22,883,507,441], () => (__webpack_exec__(3351)));
+var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,382,22,883,507,946], () => (__webpack_exec__(3351)));
 module.exports = __webpack_exports__;
 
 })();

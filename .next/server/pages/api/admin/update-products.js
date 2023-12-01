@@ -101,7 +101,10 @@ class GoogleDriveFilesService extends GoogleAuthService/* default */.Z {
 }
 /* harmony default export */ const services_GoogleDriveFilesService = (GoogleDriveFilesService);
 
+// EXTERNAL MODULE: ./src/services/OrderService.ts + 1 modules
+var OrderService = __webpack_require__(9554);
 ;// CONCATENATED MODULE: ./commands/UpdateProducts.ts
+
 
 
 
@@ -115,12 +118,14 @@ function serializeProducts(products, files) {
         if (i !== 0) {
             const fileInfo = files.find((file)=>file.code === parseInt(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN])
             );
-            let stock = Number(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN]);
-            if (isNaN(stock)) {
+            let stock = product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN];
+            if (stock === "" || isNaN(Number(stock))) {
                 stock = null;
+            } else {
+                stock = Number(stock);
             }
             serializeProducts1.push({
-                stock: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.STOCK_COLUMN],
+                stock,
                 code: parseInt(product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.CODE_COLUMN]),
                 name: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.NAME_COLUMN],
                 minimum: product[config/* default.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN */.Z.GOOGLE_SHEET_ROWS.PRODUCTS.MINIUM_COLUMN],
@@ -137,7 +142,18 @@ function serializeProducts(products, files) {
 }
 async function saveProductsOnMongo(products) {
     try {
+        const orderService = external_tsyringe_.container.resolve(OrderService/* default */.Z);
         const productService = external_tsyringe_.container.resolve(ProductService/* default */.Z);
+        const orderedProductsQuantitiesByCode = await orderService.getAllOrderedProductsQuantitiesByCode();
+        products.map((product)=>{
+            if (product.stock !== null && orderedProductsQuantitiesByCode[product.code]) {
+                if (product.stock < orderedProductsQuantitiesByCode[product.code]) {
+                    product.stock = 0;
+                } else {
+                    product.stock -= orderedProductsQuantitiesByCode[product.code];
+                }
+            }
+        });
         await productService.deleteAll();
         await Promise.all(products.map((product)=>productService.save(product)
         ));
@@ -218,7 +234,7 @@ async function updateProductsOnDb(req, res) {
 var __webpack_require__ = require("../../../webpack-api-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [684,96,5,74,419,102], () => (__webpack_exec__(8592)));
+var __webpack_exports__ = __webpack_require__.X(0, [684,96,5,554,74,419,102], () => (__webpack_exec__(8592)));
 module.exports = __webpack_exports__;
 
 })();

@@ -348,14 +348,14 @@ async function getServerSideProps(context) {
     }
     if (ironSession.user && getIsOpen.status === "open") {
         const orderService = tsyringe__WEBPACK_IMPORTED_MODULE_0__.container.resolve(_services_OrderService__WEBPACK_IMPORTED_MODULE_5__/* ["default"] */ .Z);
-        const ModelResponse = await orderService.getUserOrder(ironSession.user.email);
+        const userOrder = await orderService.getUserOrder(ironSession.user.email);
         const googleSheetInstance = new _services_GoogleSheetService__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z("users");
         const users = await googleSheetInstance.getGoogleSheetData();
         const loggedUser = users.find((matchingUser)=>matchingUser[_constants_config__WEBPACK_IMPORTED_MODULE_6__/* ["default"].GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN] === ironSession.user.email
         );
         cart.balance = parseFloat(loggedUser[_constants_config__WEBPACK_IMPORTED_MODULE_6__/* ["default"].GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN]);
-        if (ModelResponse) {
-            cart.products = ModelResponse.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
+        if (userOrder) {
+            cart.products = userOrder.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
                     code,
                     name,
                     price,

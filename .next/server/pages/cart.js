@@ -299,7 +299,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _src_context__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(9684);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(271);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var _helpers_alerts__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(2122);
+/* harmony import */ var _src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5604);
 /* harmony import */ var _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3753);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__]);
 ([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
@@ -333,7 +333,7 @@ function Cart(props) {
     (0,react__WEBPACK_IMPORTED_MODULE_7__.useEffect)(()=>{
         (0,_helpers_notify__WEBPACK_IMPORTED_MODULE_8__/* .infoMessages */ .o)();
         cart.syncProductsStock({
-            onStockConflict: _helpers_alerts__WEBPACK_IMPORTED_MODULE_15__/* .multipleProductsNoStockAlert */ .p
+            onStockConflict: _src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__/* .multipleProductsNoStockAlert */ .pk
         });
     }, []);
     const sendOrder = async ()=>{
@@ -343,7 +343,7 @@ function Cart(props) {
         }
         await cart.syncProductsStock({
             onStockConflict (conflictingProducts) {
-                (0,_helpers_alerts__WEBPACK_IMPORTED_MODULE_15__/* .multipleProductsNoStockAlert */ .p)(conflictingProducts);
+                (0,_src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__/* .multipleProductsNoStockAlert */ .pk)(conflictingProducts);
             },
             onStockIsEnough () {
                 (0,_src_hooks_fetchHook__WEBPACK_IMPORTED_MODULE_9__/* .Fetch */ .U)({
@@ -381,25 +381,27 @@ function Cart(props) {
             console.warn(`No puedes cancelar una orden si no existe`);
             return;
         }
-        (0,_src_hooks_fetchHook__WEBPACK_IMPORTED_MODULE_9__/* .Fetch */ .U)({
-            url: `/api/orders/cancel`,
-            method: "DELETE",
-            data: {
-                orderId: props.orderId
-            },
-            onSuccess: ()=>{
-                router.push("/");
-                cart.clearProducts();
-                react_toastify__WEBPACK_IMPORTED_MODULE_10__.toast.warn(`Su pedido se ha cancelado con éxito`, {
-                    icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__.FontAwesomeIcon, {
-                        icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__.faCheckCircle,
-                        color: "#EA903C"
-                    })
-                });
-            },
-            onError: (e)=>{
-                console.warn(`error on deleting order`, e);
-            }
+        (0,_src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__/* .confirmOrderDeletionAlert */ .ub)(()=>{
+            (0,_src_hooks_fetchHook__WEBPACK_IMPORTED_MODULE_9__/* .Fetch */ .U)({
+                url: `/api/orders/cancel`,
+                method: "DELETE",
+                data: {
+                    orderId: props.orderId
+                },
+                onSuccess: ()=>{
+                    router.push("/");
+                    cart.clearProducts();
+                    react_toastify__WEBPACK_IMPORTED_MODULE_10__.toast.warn(`Su pedido se ha cancelado con éxito`, {
+                        icon: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_11__.FontAwesomeIcon, {
+                            icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_12__.faCheckCircle,
+                            color: "#EA903C"
+                        })
+                    });
+                },
+                onError: (e)=>{
+                    console.warn(`error on deleting order`, e);
+                }
+            });
         });
     };
     return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_layout__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -425,8 +427,10 @@ function Cart(props) {
                             xl: 4,
                             children: [
                                 cart.products.map((product1)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_cards_OrderProductCard__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z, {
-                                        deleteProduct: (product)=>cart.deleteProduct(product)
-                                        ,
+                                        deleteProduct: (product)=>{
+                                            (0,_src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__/* .confirmProductDeletionAlert */ .Fc)(product, ()=>cart.deleteProduct(product)
+                                            );
+                                        },
                                         updateProduct: (product, qty)=>cart.updateProduct({
                                                 ...product,
                                                 qty
@@ -442,7 +446,7 @@ function Cart(props) {
                                 cart.hasUnsavedChanges && /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_3__.Button, {
                                     className: `${cart.products.length > 0 ? "button-total" : "button-total-disabled"}`,
                                     onClick: sendOrder,
-                                    children: isEditingOrder ? "Modificar pedido" : "Realizar pedido"
+                                    children: isEditingOrder ? "Guardar cambios" : "Realizar pedido"
                                 }),
                                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_3__.Button, {
                                     className: "button-continue",
@@ -517,15 +521,15 @@ async function getServerSideProps(context) {
     }
     if (user.logged) {
         const orderService = tsyringe__WEBPACK_IMPORTED_MODULE_2__.container.resolve(_services_OrderService__WEBPACK_IMPORTED_MODULE_3__/* ["default"] */ .Z);
-        const ModelResponse = await orderService.getUserOrder(user.email);
+        const userOrder = await orderService.getUserOrder(user.email);
         const googleSheetInstance = new _services_GoogleSheetService__WEBPACK_IMPORTED_MODULE_4__/* ["default"] */ .Z("users");
         const users = await googleSheetInstance.getGoogleSheetData();
         const loggedUser = users.find((matchingUser)=>matchingUser[_constants_config__WEBPACK_IMPORTED_MODULE_5__/* ["default"].GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN] === user.email
         );
         cart.balance = parseFloat(loggedUser[_constants_config__WEBPACK_IMPORTED_MODULE_5__/* ["default"].GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN */ .Z.GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN]);
-        if (ModelResponse) {
-            orderId = ModelResponse._id.toString();
-            cart.products = ModelResponse.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
+        if (userOrder) {
+            orderId = userOrder._id.toString();
+            cart.products = userOrder.products.map(({ code , name , price , minimum , qty , total , picture  })=>({
                     code,
                     name,
                     price,
@@ -670,7 +674,7 @@ module.exports = import("react-toastify");;
 var __webpack_require__ = require("../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,382,22,883,441], () => (__webpack_exec__(1404)));
+var __webpack_exports__ = __webpack_require__.X(0, [531,366,433,382,22,883,946], () => (__webpack_exec__(1404)));
 module.exports = __webpack_exports__;
 
 })();

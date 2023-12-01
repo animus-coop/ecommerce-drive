@@ -619,11 +619,30 @@ let OrderService = OrderService_class = OrderService_dec2(OrderService_class = O
         existingOrder.total = total;
         return existingOrder.save();
     }
-    deleteOrder(orderId) {
+    async deleteOrder(orderId) {
+        const order = await models_Order.findById(orderId).exec();
+        if (!order) {
+            throw new Error("ORDER_NOT_FOUND");
+        }
+        await this.restoreProductsStock(order.products);
         return models_Order.findByIdAndRemove(orderId).exec();
     }
     clearLocalOrders() {
         return models_Order.deleteMany({}).exec();
+    }
+    async getAllOrderedProductsQuantitiesByCode() {
+        const allOrders = await models_Order.find({});
+        const productsQuantityByCode = {};
+        allOrders.map((order)=>{
+            order.products.map((product)=>{
+                if (productsQuantityByCode[product.code]) {
+                    productsQuantityByCode[product.code] += product.qty;
+                } else {
+                    productsQuantityByCode[product.code] = product.qty;
+                }
+            });
+        });
+        return productsQuantityByCode;
     }
     getProductsThatNeedStockUpdate(incomingProducts, existingProducts) {
         const removedProducts = existingProducts.filter((existingProduct)=>{
@@ -652,6 +671,11 @@ let OrderService = OrderService_class = OrderService_dec2(OrderService_class = O
             };
         }).filter((product)=>product.qtyChangedBy !== 0
         ).concat(removedProducts);
+    }
+    restoreProductsStock(products) {
+        return Promise.all(products.map(async (product)=>{
+            return this.productService.updateProductStock(product.code, product.qty);
+        }));
     }
 }) || OrderService_class) || OrderService_class) || OrderService_class) || OrderService_class;
 /* harmony default export */ const services_OrderService = (OrderService);

@@ -133,11 +133,30 @@ let OrderService = _class = _dec2(_class = _dec1(_class = _dec((_class = class O
         existingOrder.total = total;
         return existingOrder.save();
     }
-    deleteOrder(orderId) {
+    async deleteOrder(orderId) {
+        const order = await models_Order.findById(orderId).exec();
+        if (!order) {
+            throw new Error("ORDER_NOT_FOUND");
+        }
+        await this.restoreProductsStock(order.products);
         return models_Order.findByIdAndRemove(orderId).exec();
     }
     clearLocalOrders() {
         return models_Order.deleteMany({}).exec();
+    }
+    async getAllOrderedProductsQuantitiesByCode() {
+        const allOrders = await models_Order.find({});
+        const productsQuantityByCode = {};
+        allOrders.map((order)=>{
+            order.products.map((product)=>{
+                if (productsQuantityByCode[product.code]) {
+                    productsQuantityByCode[product.code] += product.qty;
+                } else {
+                    productsQuantityByCode[product.code] = product.qty;
+                }
+            });
+        });
+        return productsQuantityByCode;
     }
     getProductsThatNeedStockUpdate(incomingProducts, existingProducts) {
         const removedProducts = existingProducts.filter((existingProduct)=>{
@@ -166,6 +185,11 @@ let OrderService = _class = _dec2(_class = _dec1(_class = _dec((_class = class O
             };
         }).filter((product)=>product.qtyChangedBy !== 0
         ).concat(removedProducts);
+    }
+    restoreProductsStock(products) {
+        return Promise.all(products.map(async (product)=>{
+            return this.productService.updateProductStock(product.code, product.qty);
+        }));
     }
 }) || _class) || _class) || _class) || _class;
 /* harmony default export */ const services_OrderService = (OrderService);
