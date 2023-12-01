@@ -28,13 +28,13 @@ export async function getServerSideProps(context) {
 
 	if (ironSession.user && getIsOpen.status === 'open') {
 		const orderService = container.resolve(OrderService);
-		const ModelResponse = await orderService.getUserOrder(ironSession.user.email);
+		const userOrder = await orderService.getUserOrder(ironSession.user.email);
 		const googleSheetInstance = new GoogleSheetService('users');
 		const users: Array<Array<string>> = await googleSheetInstance.getGoogleSheetData();
 		const loggedUser = users.find(matchingUser => matchingUser[config.GOOGLE_SHEET_ROWS.USERS.EMAIL_COLUMN] === ironSession.user.email);
 		cart.balance = parseFloat(loggedUser[config.GOOGLE_SHEET_ROWS.USERS.BALANCE_COLUMN]);
-		if (ModelResponse) {
-			cart.products = ModelResponse.products.map(({ code, name, price, minimum, qty, total, picture }) => ({
+		if (userOrder) {
+			cart.products = userOrder.products.map(({ code, name, price, minimum, qty, total, picture }) => ({
 				code,
 				name,
 				price,
