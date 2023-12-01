@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import {CartProduct} from "../global/types";
 
 export function noStockAlert(currentStock: number, unsavedQty: number, redirectToCart: () => void) {
     return Swal.fire({
@@ -38,5 +39,39 @@ export function multipleProductsNoStockAlert(products: Array<{name: string, stoc
                 return `<li>${product.name}: Quedan ${product.stock} disponibles y tenés ${product.unsavedQty} sin guardar</li>`
             }).join("")}
         `
+    })
+}
+
+export function confirmProductDeletionAlert(product: CartProduct, onConfirm: () => void) {
+    return Swal.fire({
+        html: `¿Estás seguro que querés eliminar todas las unidades de "${product.name}" de tu carrito?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#db8704",
+        cancelButtonColor: "#d33",
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        footer: 'Recordá que para hacer efectivos los cambios tenés que guardar tu pedido nuevamente'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            onConfirm();
+        }
+    })
+}
+
+export function confirmOrderDeletionAlert(onConfirm: () => void) {
+    return Swal.fire({
+        title: `¿Estás seguro que querés cancelar tu pedido?`,
+        html: `Si lo hacés, vas a perder todos los productos que agregaste a tu carrito`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: "#db8704",
+        cancelButtonColor: "#d33",
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, volver',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            onConfirm();
+        }
     })
 }

@@ -13,7 +13,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { useAppCtx } from '../src/context';
 import Swal from "sweetalert2";
-import {multipleProductsNoStockAlert} from "../helpers/alerts";
+import {
+	confirmOrderDeletionAlert,
+	confirmProductDeletionAlert,
+	multipleProductsNoStockAlert
+} from "../src/utils/alerts";
 export { getServerSideProps } from '../src/ssp/cart';
 
 function mapErrors(error) {
@@ -72,20 +76,22 @@ export default function Cart(props) {
 			console.warn(`No puedes cancelar una orden si no existe`);
 			return;
 		}
-		Fetch<{ orderId: string;}>({
-			url: `/api/orders/cancel`,
-			method: "DELETE",
-			data: { orderId: props.orderId},
-			onSuccess: () => {
-				router.push('/');
-				cart.clearProducts()
-				toast.warn(`Su pedido se ha cancelado con éxito`, {
-					icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />
-				});
-			},
-			onError: e => {
-				console.warn(`error on deleting order`, e);
-			}
+		confirmOrderDeletionAlert(() => {
+			Fetch<{ orderId: string;}>({
+				url: `/api/orders/cancel`,
+				method: "DELETE",
+				data: { orderId: props.orderId},
+				onSuccess: () => {
+					router.push('/');
+					cart.clearProducts()
+					toast.warn(`Su pedido se ha cancelado con éxito`, {
+						icon: <FontAwesomeIcon icon={faCheckCircle} color="#EA903C" />
+					});
+				},
+				onError: e => {
+					console.warn(`error on deleting order`, e);
+				}
+			});
 		});
 	};
 
@@ -100,7 +106,9 @@ export default function Cart(props) {
 								{cart.products.map((product: productType) => (
 									<OrderProductCard
 										key={product.code}
-										deleteProduct={(product: productType) => cart.deleteProduct(product)}
+										deleteProduct={(product: productType) => {
+											confirmProductDeletionAlert(product, () => cart.deleteProduct(product))
+										}}
 										updateProduct={(product: productType, qty) => cart.updateProduct({ ...product, qty })}
 										product={product}
 									/>
@@ -111,7 +119,7 @@ export default function Cart(props) {
 										className={`${cart.products.length > 0 ? 'button-total' : 'button-total-disabled'}`}
 										onClick={sendOrder}
 									>
-										{isEditingOrder ? 'Modificar pedido' : 'Realizar pedido'}
+										{isEditingOrder ? 'Guardar cambios' : 'Realizar pedido'}
 									</Button>
 								)}
 								<Button

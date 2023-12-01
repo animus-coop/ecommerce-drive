@@ -1,6 +1,6 @@
-import {CartProduct, productType} from "../src/global/types";
+import {CartProduct, ProductType} from "../src/global/types";
 
-export function productHasEnoughStock(product: productType, quantity: number): boolean {
+export function productHasEnoughStock(product: ProductType, quantity: number): boolean {
   return product.stock === null || product.stock >= quantity;
 }
 

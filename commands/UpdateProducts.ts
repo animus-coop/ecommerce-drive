@@ -4,11 +4,11 @@ import CategoryService from '../src/services/CategoryService';
 import GoogleSheetService from '../src/services/GoogleSheetService';
 import { slugify } from '../helpers/slug';
 import GoogleDriveFilesService from '../src/services/GoogleDriveFilesService';
-import { FileInfoType, productType } from '../src/global/types';
+import { FileInfoType, ProductType } from '../src/global/types';
 import config from '../constants/config';
 import OrderService from "../src/services/OrderService";
 
-function serializeProducts(products: Array<Array<string>>, files: FileInfoType): Array<productType> {
+function serializeProducts(products: Array<Array<string>>, files: FileInfoType): Array<ProductType> {
 	const serializeProducts = [];
 
 	products.map((product, i) => {
@@ -39,7 +39,7 @@ function serializeProducts(products: Array<Array<string>>, files: FileInfoType):
 	return serializeProducts;
 }
 
-async function saveProductsOnMongo(products: Array<productType>): Promise<object> {
+async function saveProductsOnMongo(products: Array<ProductType>): Promise<object> {
 	try {
 		const orderService = container.resolve(OrderService);
 		const productService = container.resolve(ProductService);
@@ -63,7 +63,7 @@ async function saveProductsOnMongo(products: Array<productType>): Promise<object
 	}
 }
 
-async function saveCategories(products: Array<productType>): Promise<object> {
+async function saveCategories(products: Array<ProductType>): Promise<object> {
 	try {
 		const categoryService = container.resolve(CategoryService);
 		const categoriesToSave = [];
@@ -90,7 +90,7 @@ export async function updateProducts(): Promise<object> {
 		const GDservice = new GoogleDriveFilesService();
 		const filesInfo = await GDservice.retrieveFilesFromPicturesFolder();
 
-		const formattedProducts: Array<productType> = serializeProducts(products, filesInfo);
+		const formattedProducts: Array<ProductType> = serializeProducts(products, filesInfo);
 		await saveProductsOnMongo(formattedProducts);
 		await saveCategories(formattedProducts);
 

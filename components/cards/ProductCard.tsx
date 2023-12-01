@@ -2,13 +2,13 @@ import {Card, Grid, Text, Row, Button, Image, Loading} from '@nextui-org/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFaceLaughBeam } from '@fortawesome/free-solid-svg-icons';
 import {Dispatch, FC, SetStateAction, useEffect, useState} from 'react';
-import { productType } from '../../src/global/types';
+import { ProductType } from '../../src/global/types';
 import QuantityControls from '../QuantityControls';
 import StockBadge from "../StockBadge";
 
 type props = {
-	item: productType;
-	addProduct(product: productType, qty: number, setLoading: Dispatch<SetStateAction<boolean>> ): void;
+	item: ProductType;
+	addProduct(product: ProductType, qty: number, setLoading: Dispatch<SetStateAction<boolean>> ): void;
 };
 
 const ProductCard: FC<props> = ({ item, addProduct }) => {

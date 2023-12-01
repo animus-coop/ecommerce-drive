@@ -82,7 +82,12 @@ class OrderService extends BaseService {
 		return existingOrder.save();
 	}
 
-	deleteOrder(orderId: string) {
+	async deleteOrder(orderId: string) {
+		const order = await Order.findById(orderId).exec();
+		if (!order) {
+			throw new Error('ORDER_NOT_FOUND');
+		}
+		await this.restoreProductsStock(order.products);
 	    return Order.findByIdAndRemove(orderId).exec();
 	}
 
@@ -133,6 +138,12 @@ class OrderService extends BaseService {
 					qtyChangedBy: product.qty
 				};
 			}).filter((product) => product.qtyChangedBy !== 0).concat(removedProducts);
+	}
+
+	private restoreProductsStock(products: Array<CartProduct>) {
+		return Promise.all(products.map(async (product) => {
+			return this.productService.updateProductStock(product.code, product.qty);
+		}));
 	}
 }
 

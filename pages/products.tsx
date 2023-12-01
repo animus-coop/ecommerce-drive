@@ -14,7 +14,7 @@ import {CartProduct as productType} from "../src/global/types";
 import {toast} from "react-toastify";
 import Swal from 'sweetalert2'
 import {productHasEnoughStock} from "../helpers/products";
-import {noStockAlert} from "../helpers/alerts";
+import {noStockAlert} from "../src/utils/alerts";
 import {CartIcon} from "../components/svg/CartIcon";
 import {useRouter} from "next/router";
 export { getServerSideProps } from '../src/ssp/products';

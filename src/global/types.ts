@@ -79,7 +79,7 @@ export type sheetOrder = Array<{
 	cantidad: number;
 }>;
 
-export type productType = {
+export type ProductType = {
 	stock: number;
 	code: number;
 	name: string;
