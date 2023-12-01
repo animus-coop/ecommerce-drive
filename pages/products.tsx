@@ -118,7 +118,7 @@ export default function Products(props) {
 					<>
 						<Grid.Container gap={1} css={{ padding: 0, backgroundColor: '#fff' }}>
 							{products &&
-								products.map(item => (
+								products.filter(product => product.stock !== 0).map(item => (
 									<Grid xs={12} sm={12} md={6} lg={4} xl={4} key={item.code}>
 										<ProductCard
 											addProduct={(product, qty, setLoading) => addProduct({...product, qty}, setLoading)}

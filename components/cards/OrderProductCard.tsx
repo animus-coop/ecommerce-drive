@@ -49,7 +49,7 @@ const OrderProductCard: FC<ProductCartProps> = ({ product, deleteProduct, update
 						<div className="product-buttons">
 							<QuantityControls
 								qty={quantity}
-								moreAvailable={remainingStock !== null && remainingStock > 0}
+								moreAvailable={remainingStock === null || remainingStock > 0}
 								increaseQty={() => {
 									if (remainingStock !== null && remainingStock <= 0) return;
 									setQuantity(prev => prev + 1);
