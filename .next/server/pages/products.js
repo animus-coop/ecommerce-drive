@@ -551,7 +551,8 @@ function Products(props) {
                                     padding: 0,
                                     backgroundColor: "#fff"
                                 },
-                                children: products && products.map((item)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Grid, {
+                                children: products && products.filter((product)=>product.stock !== 0
+                                ).map((item)=>/*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Grid, {
                                         xs: 12,
                                         sm: 12,
                                         md: 6,

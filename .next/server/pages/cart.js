@@ -136,7 +136,7 @@ const OrderProductCard = ({ product , deleteProduct , updateProduct  })=>{
                                         className: "product-buttons",
                                         children: /*#__PURE__*/ jsx_runtime_.jsx(QuantityControls/* default */.Z, {
                                             qty: quantity,
-                                            moreAvailable: remainingStock !== null && remainingStock > 0,
+                                            moreAvailable: remainingStock === null || remainingStock > 0,
                                             increaseQty: ()=>{
                                                 if (remainingStock !== null && remainingStock <= 0) return;
                                                 setQuantity((prev)=>prev + 1
