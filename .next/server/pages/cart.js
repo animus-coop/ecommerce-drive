@@ -5,6 +5,38 @@ exports.id = 190;
 exports.ids = [190,777];
 exports.modules = {
 
+/***/ 8697:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Z": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
+
+const EmailWarning = ()=>{
+    return /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+        className: "email-warning",
+        children: [
+            /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("p", {
+                children: [
+                    /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("b", {
+                        children: "\xa1Importante!"
+                    }),
+                    " Cada vez que guardes un pedido, te enviaremos un mail de confirmaci\xf3n."
+                ]
+            }),
+            /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("p", {
+                children: "Si no recib\xeds el mail de confirmaci\xf3n en tu bandeja de entrada, revis\xe1 la carpeta de spam."
+            })
+        ]
+    });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (EmailWarning);
+
+
+/***/ }),
+
 /***/ 1463:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
@@ -275,7 +307,7 @@ __webpack_require__.a(module, async (__webpack_handle_async_dependencies__, __we
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ Cart),
-/* harmony export */   "getServerSideProps": () => (/* reexport safe */ _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__.N)
+/* harmony export */   "getServerSideProps": () => (/* reexport safe */ _src_ssp_cart__WEBPACK_IMPORTED_MODULE_17__.N)
 /* harmony export */ });
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(997);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
@@ -300,9 +332,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(271);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_14__);
 /* harmony import */ var _src_utils_alerts__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(5604);
-/* harmony import */ var _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(3753);
-var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__]);
-([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_16__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+/* harmony import */ var _components_EmailWarning__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(8697);
+/* harmony import */ var _src_ssp_cart__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(3753);
+var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_17__]);
+([_helpers_notify__WEBPACK_IMPORTED_MODULE_8__, react_toastify__WEBPACK_IMPORTED_MODULE_10__, _src_ssp_cart__WEBPACK_IMPORTED_MODULE_17__] = __webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__);
+
 
 
 
@@ -460,7 +494,8 @@ function Cart(props) {
                                     className: `${isEditingOrder ? "button-cancel" : "button-cancel-disabled"}`,
                                     onClick: cancelOrder,
                                     children: "Cancelar pedido"
-                                })
+                                }),
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_components_EmailWarning__WEBPACK_IMPORTED_MODULE_16__/* ["default"] */ .Z, {})
                             ]
                         })
                     })
