@@ -18,6 +18,7 @@ import {
 	confirmProductDeletionAlert,
 	multipleProductsNoStockAlert
 } from "../src/utils/alerts";
+import EmailWarning from "../components/EmailWarning";
 export { getServerSideProps } from '../src/ssp/cart';
 
 function mapErrors(error) {
@@ -137,6 +138,7 @@ export default function Cart(props) {
 								>
 									Cancelar pedido
 								</Button>
+								<EmailWarning />
 							</Grid>
 						</Grid.Container>
 					</Container>
