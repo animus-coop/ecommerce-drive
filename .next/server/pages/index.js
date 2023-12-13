@@ -135,16 +135,23 @@ const LoginCard = ()=>{
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _nextui_org_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6735);
 /* harmony import */ var _nextui_org_react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _helpers_formatDate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2235);
+/* harmony import */ var _helpers_formatDate__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(2235);
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6466);
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(7197);
+/* harmony import */ var _fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__);
+
+
 
 
 
 const MessageCard = ({ status  })=>{
-    const FechaHora = `${(0,_helpers_formatDate__WEBPACK_IMPORTED_MODULE_2__/* .getDayFromDate */ .f)(status.openDate)} a las ${(0,_helpers_formatDate__WEBPACK_IMPORTED_MODULE_2__/* .getTimeFromDate */ .D)(status.openDate)}`;
+    const FechaHora = `${(0,_helpers_formatDate__WEBPACK_IMPORTED_MODULE_4__/* .getDayFromDate */ .f)(status.openDate)} a las ${(0,_helpers_formatDate__WEBPACK_IMPORTED_MODULE_4__/* .getTimeFromDate */ .D)(status.openDate)}`;
     return /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("div", {
-        className: "message-card-container",
+        className: "message-card-wrap",
         children: /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Container, {
             fluid: true,
+            className: "message-card-container",
             children: [
                 /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Card, {
                     css: {
@@ -176,25 +183,45 @@ const MessageCard = ({ status  })=>{
                         ]
                     })
                 }) : /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)("div", {
+                    className: "closed-cart-text",
                     children: [
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Text, {
                             h1: true,
-                            css: {
-                                color: "white"
-                            },
                             children: [
                                 "El carrito ya est\xe1 cerrado.",
                                 " "
                             ]
                         }),
                         /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Text, {
-                            h4: true,
-                            css: {
-                                color: "white"
-                            },
+                            size: "$2xl",
                             children: [
-                                "Nos vemos la pr\xf3xima semana.",
-                                " "
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx(_fortawesome_react_fontawesome__WEBPACK_IMPORTED_MODULE_3__.FontAwesomeIcon, {
+                                    icon: _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_2__.faArrowRight,
+                                    color: "#EA903C"
+                                }),
+                                " Pod\xe9s chequear el detalle de lo pedido, lo entregado y tu saldos con el grupo de compras en ",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("a", {
+                                    target: "_blank",
+                                    href: "https://docs.google.com/spreadsheets/d/16J909PqhPXD48peYWb86Fud3jfY47AzhbbM_YaJFfz4/edit#gid=0",
+                                    children: /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("b", {
+                                        children: " este link"
+                                    })
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsxs)(_nextui_org_react__WEBPACK_IMPORTED_MODULE_1__.Text, {
+                            children: [
+                                "\xa1La planilla no es editable! Si ves algo que est\xe1 mal escribinos a comprascomunitariasalmargen@gmail.com y nosotros lo modificamos. Lo vas a ver reflejado en la planilla.",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
+                                "La planilla tiene tres vi\xf1etas.",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
+                                "1- Lista de precios definitiva. En la \xfaltima columna les indica si hubo cambio en el precio con respecto a lo que vieron en el carrito. En la mayor\xeda de los casos las variaciones se deben a la inflaci\xf3n, y debes en cuando a alg\xfan error humano en la carga de los precios.",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
+                                "2- Detalle de lo que hab\xedan pedido y lo que se les entreg\xf3 (columna H y J). Ahora sumamos una columna intermedia que marca autom\xe1ticamente cuando hubo diferencias entre lo pedido y lo entregado.",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
+                                "3- Finalmente una con el valor total de la compra, lo que adelantaron y lo que qued\xf3 pendiente a favor o en contra.",
+                                /*#__PURE__*/ react_jsx_runtime__WEBPACK_IMPORTED_MODULE_0__.jsx("br", {}),
+                                "Cualquier duda o diferencia, por favor avisen a comprascomunitariasalmargen@gmail.com as\xed lo chequeamos."
                             ]
                         })
                     ]
@@ -396,6 +423,20 @@ async function getServerSideProps(context) {
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
+
+/***/ }),
+
+/***/ 6466:
+/***/ ((module) => {
+
+module.exports = require("@fortawesome/free-solid-svg-icons");
+
+/***/ }),
+
+/***/ 7197:
+/***/ ((module) => {
+
+module.exports = require("@fortawesome/react-fontawesome");
 
 /***/ }),
 
