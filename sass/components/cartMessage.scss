@@ -1,6 +1,38 @@
-.message-card-container {
-    background-image: url('/img/BgImgAviso.jpg');
-    height: 100vh;
-    background-repeat: no-repeat;
+.message-card-wrap {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.message-card-wrap::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-image: url('/img/closedCartBg.jpg');
     background-size: cover;
+}
+.message-card-container {
+    position: relative;
+}
+
+.closed-cart-text {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    a {
+        color: #fff !important;
+        border-bottom: 0 solid #fff;
+    }
+    a:hover {
+        border-bottom: 1px solid #fff;
+    }
+}
+
+.closed-cart-text > * {
+    color: #fff !important;
 }
